@@ -9,6 +9,8 @@ using AForge.Video;
 using AForge.Video.DirectShow;
 using AForge.Video.FFMPEG;
 using AForge.Controls;
+using ZXing;
+using System.Drawing;
 
 namespace Market
 {
@@ -22,11 +24,15 @@ namespace Market
         /// <summary> 用于获取输入的视频设备
         /// </summary>
         private VideoCaptureDevice VideoSource;
-        /// <summary> 初始化商品扫描
+        /// <summary> 读取条码
+        /// </summary>
+        private BarcodeReader CodeReader;
+        /// <summary> 初始化商品扫描，初始化条码扫描类
         /// </summary>
         public CheckGoods()
         {
-
+            CodeReader = new BarcodeReader();//初始化条码扫描类
+            CodeReader.Options.CharacterSet = "UTF-8";//设置条码字符集类型为UTF-8
         }
         /// <summary> 检查视频输入设备是否正常
         /// </summary>
@@ -52,6 +58,17 @@ namespace Market
         public VideoCaptureDevice GetVideoSource()
         {
             return VideoSource;//返回视频输入源
+        }
+        /// <summary> 检查图片中存在的商品条码
+        /// </summary>
+        /// <param name="ScreenShot">摄像头截图</param>
+        /// <returns>返回 String：条码值 null：图片中不存在条码</returns>
+        public String CheckBarCode(Bitmap ScreenShot)
+        {
+            Result barcode = CodeReader.Decode(ScreenShot);//使用BarCodeReader解码
+            if (barcode == null)
+                return null;//若条码为空则返回空
+            return barcode.Text;//返回条码对应字符串
         }
     }
 }

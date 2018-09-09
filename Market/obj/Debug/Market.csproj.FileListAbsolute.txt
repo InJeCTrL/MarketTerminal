@@ -23,3 +23,6 @@ D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Video.FFMPEG.dll
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Imaging.Formats.xml
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Video.DirectShow.xml
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Video.FFMPEG.xml
+D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\zxing.dll
+D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\zxing.pdb
+D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\zxing.xml

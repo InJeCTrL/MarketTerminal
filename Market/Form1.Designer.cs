@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.videoSourcePlayer1 = new AForge.Controls.VideoSourcePlayer();
             this.button3 = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // button1
@@ -46,7 +48,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(432, 12);
+            this.button2.Location = new System.Drawing.Point(296, 12);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(111, 44);
             this.button2.TabIndex = 2;
@@ -56,9 +58,9 @@
             // 
             // videoSourcePlayer1
             // 
-            this.videoSourcePlayer1.Location = new System.Drawing.Point(368, 77);
+            this.videoSourcePlayer1.Location = new System.Drawing.Point(375, 77);
             this.videoSourcePlayer1.Name = "videoSourcePlayer1";
-            this.videoSourcePlayer1.Size = new System.Drawing.Size(282, 208);
+            this.videoSourcePlayer1.Size = new System.Drawing.Size(301, 219);
             this.videoSourcePlayer1.TabIndex = 3;
             this.videoSourcePlayer1.Text = "videoSourcePlayer1";
             this.videoSourcePlayer1.VideoSource = null;
@@ -66,13 +68,18 @@
             // button3
             // 
             this.button3.Enabled = false;
-            this.button3.Location = new System.Drawing.Point(299, 12);
+            this.button3.Location = new System.Drawing.Point(432, 12);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(111, 44);
             this.button3.TabIndex = 4;
             this.button3.Text = "暂停营业";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
@@ -98,6 +105,7 @@
         private System.Windows.Forms.Button button2;
         public AForge.Controls.VideoSourcePlayer videoSourcePlayer1;
         private System.Windows.Forms.Button button3;
+        public System.Windows.Forms.Timer timer1;
 
     }
 }
