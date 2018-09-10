@@ -51,13 +51,7 @@ namespace Market
         {
             VideoSource = new VideoCaptureDevice(VideoDevices[0].MonikerString);//获取视频输入源，默认连接第一个输入设备
             VideoSource.VideoResolution = VideoSource.VideoCapabilities[0];//指定视频输出配置
-        }
-        /// <summary> 获得视频输入源
-        /// </summary>
-        /// <returns>返回 视频输入源</returns>
-        public VideoCaptureDevice GetVideoSource()
-        {
-            return VideoSource;//返回视频输入源
+            Form1.MainFrm.videoSourcePlayer1.VideoSource = VideoSource;//将收银窗体中视频控件与视频输入设备关联
         }
         /// <summary> 检查图片中存在的商品条码
         /// </summary>
@@ -69,6 +63,18 @@ namespace Market
             if (barcode == null)
                 return null;//若条码为空则返回空
             return barcode.Text;//返回条码对应字符串
+        }
+        /// <summary> 启动摄像头，启动时钟，开始捕获条码
+        /// </summary>
+        public void Start()
+        {
+            Form1.MainFrm.videoSourcePlayer1.Start();//启动摄像头
+        }
+        /// <summary> 关闭摄像头，停止时钟，暂停捕获条码
+        /// </summary>
+        public void Stop()
+        {
+            Form1.MainFrm.videoSourcePlayer1.Stop();//关闭摄像头
         }
     }
 }

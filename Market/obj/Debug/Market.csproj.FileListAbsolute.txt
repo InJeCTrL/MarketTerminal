@@ -26,3 +26,4 @@ D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Video.FFMPEG.xml
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\zxing.dll
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\zxing.pdb
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\zxing.xml
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.Pause.resources
