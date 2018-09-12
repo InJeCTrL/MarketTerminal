@@ -20,15 +20,22 @@ namespace Market
         /// <summary> 使收银主窗体全局可访问
         /// </summary>
         public static Form1 MainFrm;
+        /// <summary> 实例化数据库管理器
+        /// </summary>
+        private DataBaseManager DBMgr = new DataBaseManager();
         /// <summary> 商品扫描并检查
         /// </summary>
         private CheckGoods ChkGoods = new CheckGoods();
+        /// <summary> 保存工号
+        /// </summary>
+        private String StaffCode;
         /// <summary> 标记用户是否选择退出
         /// </summary>
         private Boolean UserExit = false;
         /// <summary> 收银主窗体初始化，初始化摄像头
         /// </summary>
-        public Form1()
+        /// <param name="StaffCode">员工工号</param>
+        public Form1(String _StaffCode)
         {
             InitializeComponent();
             MainFrm = this;//设置MainFrm为本主窗体，使其他类可访问到
@@ -40,6 +47,7 @@ namespace Market
             }
             else
                 ChkGoods.SetVideoSource();//视频输入设备正常，设置视频输入源参数
+            StaffCode = _StaffCode;//接收工号
         }
         /// <summary> 询问是否退出超市供销系统，并执行相应操作
         /// </summary>
@@ -61,9 +69,11 @@ namespace Market
         /// <param name="e"></param>
         private void Form1_Shown(object sender, EventArgs e)
         {
+            label5.Text = StaffCode;//设置工号显示
             button1.SetBounds(this.Size.Width - 110 - 30, 30, 111, 44);//设置关闭系统按钮位置
             button3.SetBounds(button1.Left - 20 - 111, button1.Top, 111,44);//设置暂停营业按钮位置
             button2.SetBounds(button3.Left - 20 - 111, button3.Top, 111, 44);//设置开始营业按钮位置
+            button7.SetBounds(button2.Left - 20 - 111, button2.Top, 111, 44);//设置系统设置按钮位置
             videoSourcePlayer1.SetBounds(this.Size.Width / 2 - 150, this.Height - 219 - 30, 301, 219);//设置视频输出区位置
             listView1.SetBounds(30,button1.Top + 44 + 50,this.Width - 60,videoSourcePlayer1.Top - button1.Top - 44 - 80);
             listView1.Columns[0].Width = listView1.Width / 5;//设置商品编号标签宽度
@@ -80,6 +90,7 @@ namespace Market
             label5.SetBounds(label6.Left + label6.Width + 30, 30, 147, 27);//设置本机工号(Num)Label位置
             button4.SetBounds(label3.Left - 60, label3.Top + 20 + 40, 111, 44);//设置结账按钮位置
             button5.SetBounds(button4.Left + 111 + 30, button4.Top, 111, 44);//设置取消交易按钮位置
+            groupBox1.SetBounds(30 + 30, videoSourcePlayer1.Top, 301, 169);//设置员工手动输入区位置
         }
         /// <summary> 开启摄像头，开始捕获
         /// </summary>
@@ -153,6 +164,48 @@ namespace Market
         {
             if (UserExit == false)
                 e.Cancel = true;//取消关闭
+        }
+        /// <summary> 判断输入的字符是否纯数字
+        /// </summary>
+        /// <param name="Input"></param>
+        /// <returns>返回 true：纯数字 false：非数字</returns>
+        private Boolean IsNumInput(char Input)
+        {
+            if (!Char.IsNumber(Input) && Input != (char)8)
+                return false;//若输入为非数字并且不是backspace则返回false
+            return true;
+        }
+        /// <summary> 判断输入的编号是否只为数字
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (IsNumInput(e.KeyChar) == false)
+                e.Handled = true;//过滤非数字
+        }
+        /// <summary> 判断输入的数量是否只为数字
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void textBox2_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (IsNumInput(e.KeyChar) == false)
+                e.Handled = true;//过滤非数字
+        }
+        /// <summary> 打开系统设置页面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (DBMgr.IsSuperUser(StaffCode) == true)//验证本机登录为超级管理员
+            {
+                Setting SettingPage = new Setting();//实例化系统设置页面类
+                SettingPage.ShowDialog();//模态显示系统设置页面
+            }
+            else
+                MessageBox.Show(null,"权限不足，请与管理员联系！","拒绝访问");
         }
     }
 }

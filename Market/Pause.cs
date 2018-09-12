@@ -12,6 +12,9 @@ namespace Market
 {
     public partial class Pause : Form
     {
+        /// <summary> 实例化数据库管理器
+        /// </summary>
+        private DataBaseManager DBMgr = new DataBaseManager();
         /// <summary> 本机员工工号
         /// </summary>
         private String StaffCode;
@@ -32,7 +35,7 @@ namespace Market
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            if (textBox1.Text.Equals("InJ"))//密码正确
+            if (DBMgr.CheckStaff(StaffCode, textBox1.Text) == true)//密码正确
             {
                 RightPwd = true;//设置密码正确标记为真
                 this.Close();//若密码验证正确则关闭锁定窗体

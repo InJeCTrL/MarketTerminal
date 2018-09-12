@@ -16,7 +16,8 @@ namespace Market
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            LoginCheck Check_DB = new LoginCheck();//首先启动LoginCheck，检查数据库是否就绪进行跳转
+            Application.Run();
         }
     }
 }
