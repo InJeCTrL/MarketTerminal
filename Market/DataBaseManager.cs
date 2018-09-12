@@ -298,5 +298,189 @@ namespace Market
             }
 
         }
+        /// <summary> 更新员工姓名
+        /// </summary>
+        /// <param name="_StaffNo">员工工号</param>
+        /// <param name="_NewName">员工新姓名</param>
+        /// <returns>返回 true：成功 false：失败</returns>
+        public Boolean UpdateStaffName(String _StaffNo, String _NewName)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand ChangeStaffName = new OracleCommand(@"update MarketTerminal_Staff
+                                                                    set STAFFNAME = '" + _NewName + @"'
+                                                                    where STAFFNO = '" + _StaffNo + @"'");//姓名更新语句
+                ChangeStaffName.Connection = Connect;//指定连接
+                ChangeStaffName.ExecuteNonQuery();//执行更新
+                return true;//更新成功
+            }
+            catch (Exception)
+            {
+                return false;//更新失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+
+        }
+        /// <summary> 更新员工密码
+        /// </summary>
+        /// <param name="_StaffNo">员工工号</param>
+        /// <param name="_NewName">员工新密码</param>
+        /// <returns>返回 true：成功 false：失败</returns>
+        public Boolean UpdateStaffPwd(String _StaffNo, String _NewPassword)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand ChangeStaffPwd = new OracleCommand(@"update MarketTerminal_Staff
+                                                                    set STAFFNAME = '" + _NewPassword + @"'
+                                                                    where STAFFNO = '" + _StaffNo + @"'");//密码更新语句
+                ChangeStaffPwd.Connection = Connect;//指定连接
+                ChangeStaffPwd.ExecuteNonQuery();//执行更新
+                return true;//更新成功
+            }
+            catch (Exception)
+            {
+                return false;//更新失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 更新员工超级管理员状态
+        /// </summary>
+        /// <param name="_StaffNo">员工工号</param>
+        /// <param name="_SUstatus">员工SU状态</param>
+        /// <returns>返回 true：成功 false：失败</returns>
+        public Boolean UpdateStaffPower(String _StaffNo,Boolean _SUstatus)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand ChangeStaffSU;//用于存放更新SU状态语句
+                if (_SUstatus == true)//赋予超级管理员
+                {
+                    ChangeStaffSU = new OracleCommand(@"update MarketTerminal_Staff
+                                                         set SUPERUSER = '1'
+                                                         where STAFFNO = '" + _StaffNo + @"'");//SU更新语句
+                }
+                else//撤销超级管理员
+                {
+                    ChangeStaffSU = new OracleCommand(@"update MarketTerminal_Staff
+                                                         set SUPERUSER = '0'
+                                                         where STAFFNO = '" + _StaffNo + @"'");//SU更新语句
+                }
+                ChangeStaffSU.Connection = Connect;//指定连接
+                ChangeStaffSU.ExecuteNonQuery();//执行更新
+                return true;//更新成功
+            }
+            catch (Exception)
+            {
+                return false;//更新失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 删除员工
+        /// </summary>
+        /// <param name="_StaffNo">员工工号</param>
+        /// <returns>返回 true：成功 false：失败</returns>
+        public Boolean DeleteStaff(String _StaffNo)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand DeleteStaff = new OracleCommand(@"delete 
+                                                                    from MARKETTERMINAL_STAFF
+                                                                    where STAFFNO='" + _StaffNo + @"'");//员工行删除语句
+                DeleteStaff.Connection = Connect;//指定连接
+                DeleteStaff.ExecuteNonQuery();//执行删除
+                return true;//删除成功
+            }
+            catch (Exception)
+            {
+                return false;//删除失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 获取单个员工信息
+        /// </summary>
+        /// <param name="_StaffNo">员工工号</param>
+        /// <returns>返回 String[]：员工信息 null：失败</returns>
+        public String[] GetStaff(String _StaffNo)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand GetUser = new OracleCommand(@"select * from MarketTerminal_Staff
+                                                              where StaffNo='" + _StaffNo + @"'");//查询语句
+                GetUser.Connection = Connect;//指定连接
+                OracleDataReader Reader = GetUser.ExecuteReader();//执行查询
+                if (Reader.Read())
+                    return new String[] { Reader[0].ToString(), Reader[1].ToString(), Reader[2].ToString(), Reader[3].ToString() };//返回信息集
+                else
+                    return null;//无此员工返回null
+            }
+            catch (Exception)
+            {
+                return null;//失败则返回null
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+
+        }
+        /// <summary> 新增员工
+        /// </summary>
+        /// <param name="_StaffInfo">员工信息集</param>
+        /// <returns>返回 true：成功 false：失败</returns>
+        public Boolean AddStaff(String[] _StaffInfo)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            int SU_flag;//SU标志
+            try
+            {
+                if (_StaffInfo[2].Equals("是"))//有超级管理员
+                    SU_flag = 1;
+                else//无超级管理员
+                    SU_flag = 0;
+                Connect.Open();//尝试连接数据库
+                OracleCommand AddStaff = new OracleCommand(@"insert into MarketTerminal_Staff
+                                                             values ('" + _StaffInfo[0] + "','" + _StaffInfo[1] + "','" + SU_flag + "','" +
+                                                            _StaffInfo[3] + @"')");//用于存放新增员工语句
+                AddStaff.Connection = Connect;//指定连接
+                AddStaff.ExecuteNonQuery();//执行添加
+                return true;//添加成功
+            }
+            catch (Exception)
+            {
+                return false;//添加失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
     }
 }

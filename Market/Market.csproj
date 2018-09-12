@@ -107,11 +107,23 @@
     <Compile Include="Setting.Designer.cs">
       <DependentUpon>Setting.cs</DependentUpon>
     </Compile>
+    <Compile Include="StaffAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StaffAdd.Designer.cs">
+      <DependentUpon>StaffAdd.cs</DependentUpon>
+    </Compile>
     <Compile Include="StaffMgr.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="StaffMgr.Designer.cs">
       <DependentUpon>StaffMgr.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StaffModify.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StaffModify.Designer.cs">
+      <DependentUpon>StaffModify.cs</DependentUpon>
     </Compile>
     <Compile Include="TrunkMgr.cs">
       <SubType>Form</SubType>
@@ -146,8 +158,14 @@
     <EmbeddedResource Include="Setting.resx">
       <DependentUpon>Setting.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="StaffAdd.resx">
+      <DependentUpon>StaffAdd.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="StaffMgr.resx">
       <DependentUpon>StaffMgr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StaffModify.resx">
+      <DependentUpon>StaffModify.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TrunkMgr.resx">
       <DependentUpon>TrunkMgr.cs</DependentUpon>

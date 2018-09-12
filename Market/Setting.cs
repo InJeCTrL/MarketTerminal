@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -69,7 +70,8 @@ namespace Market
                 {
                     DBMgr.DeleteConfigFile();//删除配置文件
                     MessageBox.Show(null, "数据库与配置文件各项删除完成，确认以重启程序！", "删除完成");//提示程序退出，即将重启程序
-                    Application.Restart();
+                    Application.Restart();//重启程序
+                    Environment.Exit(0);//防止仍有线程活动，强制关闭
                 }
                 else
                     MessageBox.Show(null, "删除失败！", "删除错误");//提示删除错误
@@ -82,7 +84,12 @@ namespace Market
         private void button3_Click(object sender, EventArgs e)
         {
             StaffMgr StaffMgr_frm = new StaffMgr();//实例化员工管理窗体
-            StaffMgr_frm.ShowDialog();//模态启动窗体
+            if (DialogResult.Yes == StaffMgr_frm.ShowDialog())//模态启动窗体
+            {
+                MessageBox.Show(null, "员工信息变更后必须重启程序已检测生效，确认以重启程序！", "员工检测");//提示程序退出，即将重启程序
+                Application.Restart();//重启程序
+                Environment.Exit(0);//防止仍有线程活动，强制关闭
+            }
         }
     }
 }

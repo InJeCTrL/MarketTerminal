@@ -32,3 +32,6 @@ D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.Setting.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.DB_Login.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.StaffMgr.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.TrunkMgr.resources
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.AccountMgr.resources
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.StaffModify.resources
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.StaffAdd.resources

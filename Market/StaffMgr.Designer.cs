@@ -34,12 +34,12 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.label1 = new System.Windows.Forms.Label();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.修改ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.删除ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.增加ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.增加ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
+            this.增加ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.label1 = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -81,6 +81,43 @@
             this.columnHeader4.Text = "密码";
             this.columnHeader4.Width = 126;
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.修改ToolStripMenuItem,
+            this.删除ToolStripMenuItem,
+            this.增加ToolStripMenuItem,
+            this.增加ToolStripMenuItem1});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(101, 76);
+            this.contextMenuStrip1.Opened += new System.EventHandler(this.contextMenuStrip1_Opened);
+            // 
+            // 修改ToolStripMenuItem
+            // 
+            this.修改ToolStripMenuItem.Name = "修改ToolStripMenuItem";
+            this.修改ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.修改ToolStripMenuItem.Text = "修改";
+            this.修改ToolStripMenuItem.Click += new System.EventHandler(this.修改ToolStripMenuItem_Click);
+            // 
+            // 删除ToolStripMenuItem
+            // 
+            this.删除ToolStripMenuItem.Name = "删除ToolStripMenuItem";
+            this.删除ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.删除ToolStripMenuItem.Text = "删除";
+            this.删除ToolStripMenuItem.Click += new System.EventHandler(this.删除ToolStripMenuItem_Click);
+            // 
+            // 增加ToolStripMenuItem
+            // 
+            this.增加ToolStripMenuItem.Name = "增加ToolStripMenuItem";
+            this.增加ToolStripMenuItem.Size = new System.Drawing.Size(149, 6);
+            // 
+            // 增加ToolStripMenuItem1
+            // 
+            this.增加ToolStripMenuItem1.Name = "增加ToolStripMenuItem1";
+            this.增加ToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.增加ToolStripMenuItem1.Text = "增加";
+            this.增加ToolStripMenuItem1.Click += new System.EventHandler(this.增加ToolStripMenuItem1_Click);
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -93,39 +130,6 @@
             this.label1.Text = "右键选定员工可选择删除、修改，右键列表任意位置可选新增员工\r\n增加、删除、修改员工后必须重新启动程序！";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.修改ToolStripMenuItem,
-            this.删除ToolStripMenuItem,
-            this.增加ToolStripMenuItem,
-            this.增加ToolStripMenuItem1});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(101, 76);
-            // 
-            // 修改ToolStripMenuItem
-            // 
-            this.修改ToolStripMenuItem.Name = "修改ToolStripMenuItem";
-            this.修改ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
-            this.修改ToolStripMenuItem.Text = "修改";
-            // 
-            // 删除ToolStripMenuItem
-            // 
-            this.删除ToolStripMenuItem.Name = "删除ToolStripMenuItem";
-            this.删除ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
-            this.删除ToolStripMenuItem.Text = "删除";
-            // 
-            // 增加ToolStripMenuItem1
-            // 
-            this.增加ToolStripMenuItem1.Name = "增加ToolStripMenuItem1";
-            this.增加ToolStripMenuItem1.Size = new System.Drawing.Size(100, 22);
-            this.增加ToolStripMenuItem1.Text = "增加";
-            // 
-            // 增加ToolStripMenuItem
-            // 
-            this.增加ToolStripMenuItem.Name = "增加ToolStripMenuItem";
-            this.增加ToolStripMenuItem.Size = new System.Drawing.Size(97, 6);
-            // 
             // StaffMgr
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -136,6 +140,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "StaffMgr";
             this.Text = "员工管理";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.StaffMgr_FormClosed);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
