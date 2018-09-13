@@ -39,7 +39,6 @@ namespace Market
             {
                 RightPwd = true;//设置密码正确标记为真
                 this.Close();//若密码验证正确则关闭锁定窗体
-                Form1.MainFrm.button2.PerformClick();//模拟单击收银主窗体中的开始营业按钮
             }
             else
                 label6.Text = "验证失败！";//密码错误

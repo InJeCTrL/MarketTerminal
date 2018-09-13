@@ -46,7 +46,7 @@ namespace Market
                 Application.Exit();//程序退出
             }
             else
-                ChkGoods.SetVideoSource();//视频输入设备正常，设置视频输入源参数
+                ChkGoods.SetVideoSource(this.videoSourcePlayer1);//视频输入设备正常，设置视频输入源参数
             StaffCode = _StaffCode;//接收工号
         }
         /// <summary> 询问是否退出超市供销系统，并执行相应操作
@@ -57,7 +57,7 @@ namespace Market
         {
             if (DialogResult.Yes == MessageBox.Show(null, "是否要退出系统？", "退出确认", MessageBoxButtons.YesNo))
             {
-                ChkGoods.Stop();//关闭摄像头
+                ChkGoods.Stop(this.videoSourcePlayer1);//关闭摄像头
                 Wnd_Stop();//设置各控件到暂停营业状态
                 UserExit = true;//设置用户退出标记为真
                 Application.Exit();//退出程序
@@ -71,9 +71,11 @@ namespace Market
         {
             label5.Text = StaffCode;//设置工号显示
             button1.SetBounds(this.Size.Width - 110 - 30, 30, 111, 44);//设置关闭系统按钮位置
-            button3.SetBounds(button1.Left - 20 - 111, button1.Top, 111,44);//设置暂停营业按钮位置
+            button7.SetBounds(button1.Left - 20 - 111, button1.Top, 111, 44);//设置系统设置按钮位置
+            button9.SetBounds(button7.Left - 20 - 111, button7.Top, 111, 44);//设置账目管理按钮位置
+            button8.SetBounds(button9.Left - 20 - 111, button9.Top, 111, 44);//设置商品管理按钮位置
+            button3.SetBounds(button8.Left - 20 - 111, button8.Top, 111,44);//设置暂停营业按钮位置
             button2.SetBounds(button3.Left - 20 - 111, button3.Top, 111, 44);//设置开始营业按钮位置
-            button7.SetBounds(button2.Left - 20 - 111, button2.Top, 111, 44);//设置系统设置按钮位置
             videoSourcePlayer1.SetBounds(this.Size.Width / 2 - 150, this.Height - 219 - 30, 301, 219);//设置视频输出区位置
             listView1.SetBounds(30,button1.Top + 44 + 50,this.Width - 60,videoSourcePlayer1.Top - button1.Top - 44 - 80);
             listView1.Columns[0].Width = listView1.Width / 5;//设置商品编号标签宽度
@@ -92,34 +94,24 @@ namespace Market
             button5.SetBounds(button4.Left + 111 + 30, button4.Top, 111, 44);//设置取消交易按钮位置
             groupBox1.SetBounds(30 + 30, videoSourcePlayer1.Top, 301, 169);//设置员工手动输入区位置
         }
-        /// <summary> 开启摄像头，开始捕获
-        /// </summary>
-        private void StartCamera()
-        {
-            ChkGoods.Start();//开启摄像头
-        }
-        /// <summary> 关闭摄像头，停止捕获
-        /// </summary>
-        private void StopCamera()
-        {
-            ChkGoods.Stop();
-        }
         /// <summary> 开始营业时设置各控件状态
         /// </summary>
         private void Wnd_Start()
         {
-            StartCamera();//开启摄像头
-            button3.Enabled = true;//允许暂停营业
             button2.Enabled = false;//不允许多次开始营业
+            button7.Enabled = false;//不允许系统设置
+            button8.Enabled = false;//不允许商品管理
+            button9.Enabled = false;//不允许账目管理
             timer1.Enabled = true;//启动定时器，定时监测条码
         }
         /// <summary> 暂停营业时设置各控件状态
         /// </summary>
         private void Wnd_Stop()
         {
-            StopCamera();//停止摄像头
-            button3.Enabled = false;//允许开始营业
-            button2.Enabled = true;//不允许多次暂停营业
+            button2.Enabled = true;//允许开始营业
+            button7.Enabled = true;//允许系统设置
+            button8.Enabled = true;//允许商品管理
+            button9.Enabled = true;//允许账目管理
             timer1.Enabled = false;//关闭定时器，不再监测条码
         }
         /// <summary> 开始营业按钮
@@ -128,8 +120,8 @@ namespace Market
         /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
+            ChkGoods.Start(this.videoSourcePlayer1);//启动摄像头并开始检查条码
             Wnd_Start();//设置各控件到营业状态
-            ChkGoods.Start();//启动摄像头并开始检查条码
         }
         /// <summary> 暂停营业按钮
         /// </summary>
@@ -137,8 +129,8 @@ namespace Market
         /// <param name="e"></param>
         private void button3_Click(object sender, EventArgs e)
         {
+            ChkGoods.Stop(this.videoSourcePlayer1);//关闭摄像头并暂停检查条码
             Wnd_Stop();//设置各控件到暂停营业状态
-            ChkGoods.Stop();//关闭摄像头并暂停检查条码
             Pause PauseFrm = new Pause(label5.Text);//实例化暂停营业锁定窗体
             PauseFrm.ShowDialog();//模态启动锁定窗体
         }
@@ -206,6 +198,40 @@ namespace Market
             }
             else
                 MessageBox.Show(null,"权限不足，请与管理员联系！","拒绝访问");
+        }
+        /// <summary> 账目管理按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button9_Click(object sender, EventArgs e)
+        {
+            if (DBMgr.IsSuperUser(StaffCode) == true)//验证本机登录为超级管理员
+            {
+                AccountMgr AccountMgr_frm = new AccountMgr();//实例化账目管理窗体
+                AccountMgr_frm.ShowDialog();//模态显示
+            }
+            else
+                MessageBox.Show(null, "权限不足，请与管理员联系！", "拒绝访问");
+        }
+        /// <summary> 商品管理按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (DBMgr.IsSuperUser(StaffCode) == true)//验证本机登录为超级管理员
+            {
+                TrunkMgr TrunkMgr_frm = new TrunkMgr();//实例化商品管理窗体
+                TrunkMgr_frm.ShowDialog();//模态显示
+                if (TrunkMgr_frm.DialogResult == DialogResult.Yes)
+                {//若商品信息有实质上的修改
+                    MessageBox.Show(null, "商品信息变更后必须重启程序以检测生效，确认以重启程序！", "商品检测");//提示程序退出，即将重启程序
+                    Application.Restart();//重启程序
+                    Environment.Exit(0);//防止仍有线程活动，强制关闭
+                }
+            }
+            else
+                MessageBox.Show(null, "权限不足，请与管理员联系！", "拒绝访问");
         }
     }
 }

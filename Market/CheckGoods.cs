@@ -47,11 +47,12 @@ namespace Market
         }
         /// <summary> 设置视频输入源
         /// </summary>
-        public void SetVideoSource()
+        /// <param name="vSource">视频输入控件</param>
+        public void SetVideoSource(VideoSourcePlayer vSource)
         {
             VideoSource = new VideoCaptureDevice(VideoDevices[0].MonikerString);//获取视频输入源，默认连接第一个输入设备
             VideoSource.VideoResolution = VideoSource.VideoCapabilities[0];//指定视频输出配置
-            Form1.MainFrm.videoSourcePlayer1.VideoSource = VideoSource;//将收银窗体中视频控件与视频输入设备关联
+            vSource.VideoSource = VideoSource;//将收银窗体中视频控件与视频输入设备关联
         }
         /// <summary> 检查图片中存在的商品条码
         /// </summary>
@@ -64,17 +65,27 @@ namespace Market
                 return null;//若条码为空则返回空
             return barcode.Text;//返回条码对应字符串
         }
-        /// <summary> 启动摄像头，启动时钟，开始捕获条码
+        /// <summary> 启动摄像头
         /// </summary>
-        public void Start()
+        /// <param name="vSource">摄像头显示控件</param>
+        public void Start(VideoSourcePlayer vSource)
         {
-            Form1.MainFrm.videoSourcePlayer1.Start();//启动摄像头
+            vSource.Start();//启动摄像头
         }
-        /// <summary> 关闭摄像头，停止时钟，暂停捕获条码
+        /// <summary> 关闭摄像头
         /// </summary>
-        public void Stop()
+        /// <param name="vSource">摄像头显示控件</param>
+        public void Stop(VideoSourcePlayer vSource)
         {
-            Form1.MainFrm.videoSourcePlayer1.Stop();//关闭摄像头
+            vSource.Stop();//关闭摄像头
+        }
+        /// <summary> 获取商品信息集
+        /// </summary>
+        /// <param name="_GoodsNo"></param>
+        /// <returns>返回 String[]：成功 null：失败</returns>
+        public String[] GetGoodsInfo(String _GoodsNo)
+        {
+            return new String[] { _GoodsNo, "", "", "", "", "", "", "" };
         }
     }
 }

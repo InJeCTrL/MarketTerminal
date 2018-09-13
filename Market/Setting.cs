@@ -86,7 +86,7 @@ namespace Market
             StaffMgr StaffMgr_frm = new StaffMgr();//实例化员工管理窗体
             if (DialogResult.Yes == StaffMgr_frm.ShowDialog())//模态启动窗体
             {
-                MessageBox.Show(null, "员工信息变更后必须重启程序已检测生效，确认以重启程序！", "员工检测");//提示程序退出，即将重启程序
+                MessageBox.Show(null, "员工信息变更后必须重启程序以检测生效，确认以重启程序！", "员工检测");//提示程序退出，即将重启程序
                 Application.Restart();//重启程序
                 Environment.Exit(0);//防止仍有线程活动，强制关闭
             }

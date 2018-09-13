@@ -93,7 +93,6 @@
             // button3
             // 
             this.button3.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button3.Enabled = false;
             this.button3.Location = new System.Drawing.Point(432, 12);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(111, 44);
@@ -141,7 +140,7 @@
             // 
             // columnHeader4
             // 
-            this.columnHeader4.Text = "销售单价（双击可修改）";
+            this.columnHeader4.Text = "销售单价";
             // 
             // columnHeader5
             // 
@@ -310,6 +309,7 @@
             this.button8.TabIndex = 16;
             this.button8.Text = "商品管理";
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button9
             // 
@@ -319,6 +319,7 @@
             this.button9.TabIndex = 17;
             this.button9.Text = "账目管理";
             this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // Form1
             // 

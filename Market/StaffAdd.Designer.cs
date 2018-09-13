@@ -144,6 +144,7 @@
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "StaffAdd";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "新增员工";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.StaffAdd_FormClosed);
             this.ResumeLayout(false);

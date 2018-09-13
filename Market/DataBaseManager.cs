@@ -123,22 +123,90 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand NewStafftbl = new OracleCommand(@"create table MarketTerminal_Staff
+                OracleCommand NewGoodstbl = new OracleCommand(@"create table MarketTerminal_Goods
                                                                 (
-                                                                    StaffNo VARCHAR(5) PRIMARY KEY,
-                                                                    StaffName VARCHAR(100) NOT NULL,
-                                                                    SuperUser INT DEFAULT 0,
-                                                                    Password VARCHAR(20)
-                                                                );");//员工表
-                NewStafftbl.ExecuteNonQuery();//执行建表
-                OracleCommand DefaultAdminInsert = new OracleCommand(@"insert into MarketTerminal_Staff
-                                                                        values ('admin','DefaultSuperUser',1,'123');");//默认初始管理员
-                NewStafftbl.ExecuteNonQuery();//执行插入
-                return true;//创建成功、插入成功
+                                                                    GoodsNo VARCHAR(20) PRIMARY KEY,
+                                                                    GoodsName VARCHAR(100) NOT NULL,
+                                                                    In_Price NUMBER NOT NULL,
+                                                                    Out_Price NUMBER NOT NULL,
+                                                                    MarketLeft INT NOT NULL,
+                                                                    TrunkLeft INT NOT NULL,
+                                                                    Brand VARCHAR(30) NOT NULL,
+                                                                    Unit VARCHAR(8) NOT NULL
+                                                                )");//商品表建表语句
+                NewGoodstbl.Connection = Connect;//指定连接
+                NewGoodstbl.ExecuteNonQuery();//执行建表
+                return true;//创建成功
             }
             catch (Exception)
             {
-                return false;//创建员工表失败则返回false
+                return false;//创建商品表失败则返回false
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 创建账目表
+        /// </summary>
+        /// <returns>返回 true：成功 false：失败</returns>
+        private Boolean CreateAccountTbl()
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand NewAccounttbl = new OracleCommand(@"create table MarketTerminal_Account
+                                                                    (
+                                                                        AccountNo VARCHAR(20) PRIMARY KEY,
+                                                                        GoodsNo VARCHAR(20) NOT NULL,
+                                                                        GoodsName VARCHAR(100) NOT NULL,
+                                                                        In_Price NUMBER NOT NULL,
+                                                                        Out_Price NUMBER NOT NULL,
+                                                                        OutNum INT NOT NULL,
+                                                                        Unit VARCHAR(8) NOT NULL,
+                                                                        Price NUMBER NOT NULL
+                                                                    )");//账目表建表语句
+                NewAccounttbl.Connection = Connect;//指定连接
+                NewAccounttbl.ExecuteNonQuery();//执行建表
+                return true;//创建成功
+            }
+            catch (Exception)
+            {
+                return false;//创建失败则返回false
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 创建商品表上针对于账目表的触发器
+        /// </summary>
+        /// <returns>返回 true：成功 false：失败</returns>
+        private Boolean CreateTrigger()
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand NewTrigger = new OracleCommand(@"create or replace trigger T_UpAcc after update
+                                                                on MarketTerminal_Goods
+                                                                for each row
+                                                                begin
+                                                                 IF :new.MarketLeft<:old.MarketLeft THEN
+                                                                    insert into MARKETTERMINAL_ACCOUNT
+                                                                    values(to_char(systimestamp,'YYYYMMDDHH24MISSFF'),:new.GOODSNO,:new.GOODSName,:new.IN_PRICE,:new.OUT_PRICE,:old.marketleft-:new.marketleft,:new.brand,(:old.marketleft-:new.marketleft)*(:new.OUT_PRICE-:new.IN_PRICE));
+                                                                 END IF;
+                                                                end;");//创建触发器语句
+                NewTrigger.Connection = Connect;//指定连接
+                NewTrigger.ExecuteNonQuery();//执行创建
+                return true;//创建成功
+            }
+            catch (Exception)
+            {
+                return false;//创建失败则返回false
             }
             finally
             {
@@ -162,7 +230,79 @@ namespace Market
             }
             catch (Exception)
             {
-                return false;//创建员工表失败则返回false
+                return false;//失败则返回false
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 删除商品表
+        /// </summary>
+        /// <returns>返回 true：成功 false：失败</returns>
+        private Boolean DeleteGoodsTbl()
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand DelGoodstbl = new OracleCommand(@"drop table MarketTerminal_Goods purge");//删除商品表
+                DelGoodstbl.Connection = Connect;//指定连接
+                DelGoodstbl.ExecuteNonQuery();//执行删除表
+                return true;//删除成功
+            }
+            catch (Exception)
+            {
+                return false;//失败则返回false
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 删除账目表
+        /// </summary>
+        /// <returns>返回 true：成功 false：失败</returns>
+        private Boolean DeleteAccountTbl()
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand DelAccounttbl = new OracleCommand(@"drop table MarketTerminal_Account purge");//删除账目表
+                DelAccounttbl.Connection = Connect;//指定连接
+                DelAccounttbl.ExecuteNonQuery();//执行删除表
+                return true;//删除成功
+            }
+            catch (Exception)
+            {
+                return false;//失败则返回false
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 删除触发器
+        /// </summary>
+        /// <returns>返回 true：成功 false：失败</returns>
+        private Boolean DeleteTrigger()
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand DelTrigger = new OracleCommand(@"drop trigger T_UpAcc");//删除触发器
+                DelTrigger.Connection = Connect;//指定连接
+                DelTrigger.ExecuteNonQuery();//执行删除
+                return true;//删除成功
+            }
+            catch (Exception)
+            {
+                return false;//失败则返回false
             }
             finally
             {
@@ -176,7 +316,32 @@ namespace Market
         {
             if (CreateStaffTbl() == true)//员工表创建成功
             {
-                return true;
+                if (CreateGoodsTbl() == true)//商品表创建成功
+                {
+                    if (CreateAccountTbl() == true)//创建账目表成功
+                    {
+                        if (CreateTrigger() == true)//创建触发器成功
+                            return true;
+                        else
+                        {//回滚账目表、商品表、员工表
+                            DeleteAccountTbl();//删除账目表
+                            DeleteStaffTbl();//删除员工表
+                            DeleteGoodsTbl();//删除商品表
+                            return false;
+                        }
+                    }
+                    else
+                    {//回滚商品表、员工表
+                        DeleteStaffTbl();//删除员工表
+                        DeleteGoodsTbl();//删除商品表
+                        return false;
+                    }
+                }
+                else
+                {//回滚员工表
+                    DeleteStaffTbl();//删除员工表
+                    return false;
+                }
             }
             else
                 return false;//员工表创建不成功，直接失败
@@ -186,12 +351,11 @@ namespace Market
         /// <returns>返回 true：删除成功 false：删除失败</returns>
         public Boolean DataBaseDelete()
         {
-            if (DeleteStaffTbl() == true)//删除员工表成功
-            {
-                return true;
-            }
-            else
-                return false;//员工表删除不成功，直接失败
+            DeleteStaffTbl();//删除员工表
+            DeleteTrigger();//删除触发器
+            DeleteGoodsTbl();//删除商品表
+            DeleteAccountTbl();//删除账目表
+            return true;
         }
         /// <summary> 创建配置文件，存放连接参数
         /// </summary>
@@ -232,6 +396,42 @@ namespace Market
             catch (Exception)
             {
                 return null;//查询员工表失败则返回null
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 获得商品列表
+        /// </summary>
+        /// <returns>返回 商品列表</returns>
+        public List<String[]> GetGoodsList()
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            List<String[]> GoodsList = new List<string[]>();//初始化商品列表
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand QueryGoodsList = new OracleCommand(@"select * from MarketTerminal_Goods");//查询语句
+                QueryGoodsList.Connection = Connect;//指定连接
+                OracleDataReader GoodsListReader = QueryGoodsList.ExecuteReader();//执行查询
+                while (GoodsListReader.Read())//按行读取，直到结尾
+                {
+                    GoodsList.Add(new String[] {GoodsListReader[0].ToString(),//商品编号
+                                                GoodsListReader[1].ToString(),//商品名
+                                                GoodsListReader[2].ToString(),//进价
+                                                GoodsListReader[3].ToString(),//售价
+                                                GoodsListReader[4].ToString(),//货架剩余
+                                                GoodsListReader[5].ToString(),//仓库剩余
+                                                GoodsListReader[6].ToString(),//品牌
+                                                GoodsListReader[7].ToString()});//单位
+                }
+                return GoodsList;//查询成功
+            }
+            catch (Exception)
+            {
+                return null;//查询商品表失败则返回null
             }
             finally
             {
@@ -357,7 +557,7 @@ namespace Market
         }
         /// <summary> 更新员工超级管理员状态
         /// </summary>
-        /// <param name="_StaffNo">员工工号</param>
+        /// <param name="_GoodsNo">员工工号</param>
         /// <param name="_SUstatus">员工SU状态</param>
         /// <returns>返回 true：成功 false：失败</returns>
         public Boolean UpdateStaffPower(String _StaffNo,Boolean _SUstatus)
@@ -476,6 +676,277 @@ namespace Market
             catch (Exception)
             {
                 return false;//添加失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 删除商品
+        /// </summary>
+        /// <param name="_GoodsNo">商品编号</param>
+        /// <returns>返回 true：成功 false：失败</returns>
+        public Boolean DeleteGoods(String _GoodsNo)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand DeleteGoods = new OracleCommand(@"delete 
+                                                                    from MARKETTERMINAL_Goods
+                                                                    where GOODSNO='" + _GoodsNo + @"'");//商品行删除语句
+                DeleteGoods.Connection = Connect;//指定连接
+                DeleteGoods.ExecuteNonQuery();//执行删除
+                return true;//删除成功
+            }
+            catch (Exception)
+            {
+                return false;//删除失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 检查商品是否存在
+        /// </summary>
+        /// <param name="_GoodsNo">商品编号</param>
+        /// <returns>返回 true：是 false：否</returns>
+        public Boolean IsGoodsExists(String _GoodsNo)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand CheckGoods = new OracleCommand(@"select * from MarketTerminal_Goods
+                                                              where GoodsNo='" + _GoodsNo + @"'");//查询语句
+                CheckGoods.Connection = Connect;//指定连接
+                OracleDataReader Reader = CheckGoods.ExecuteReader();//执行查询
+                if (Reader.Read())//查询到结果
+                    return true;//存在
+                else
+                    return false;//不存在
+            }
+            catch (Exception)
+            {
+                return false;//不存在
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 更新商品数量
+        /// </summary>
+        /// <param name="_GoodsNo">商品编号</param>
+        /// <param name="Num">新增数</param>
+        /// <returns>返回 true：成功 false：失败</returns>
+        public Boolean UpdateGoodsNum(String _GoodsNo, int Num)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand AddNum = new OracleCommand(@"update MarketTerminal_Goods
+                                                         set TrunkLeft = TrunkLeft + '" + Num + @"'
+                                                         where GoodsNo = '" + _GoodsNo + @"'");//用于存放增加数量语句
+                AddNum.Connection = Connect;//指定连接
+                AddNum.ExecuteNonQuery();//执行更新
+                return true;//更新成功
+            }
+            catch (Exception)
+            {
+                return false;//更新失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 新增商品
+        /// </summary>
+        /// <param name="_StaffInfo">商品信息集</param>
+        /// <returns>返回 true：成功 false：失败</returns>
+        public Boolean AddGoods(String[] _GoodsInfo)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand AddStaff = new OracleCommand(@"insert into MarketTerminal_Goods
+                                                             values ('" + _GoodsInfo[0] + "','" + _GoodsInfo[1] + "','" + _GoodsInfo[2] + "','" +
+                                                            _GoodsInfo[3] + "','" + _GoodsInfo[4] + "','" + _GoodsInfo[5] + "','" +
+                                                            _GoodsInfo[6] + "','" + _GoodsInfo[7] + @"')");//用于存放新增商品语句
+                AddStaff.Connection = Connect;//指定连接
+                AddStaff.ExecuteNonQuery();//执行添加
+                return true;//添加成功
+            }
+            catch (Exception)
+            {
+                return false;//添加失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 获取单个商品信息
+        /// </summary>
+        /// <param name="_GoodsNo">商品编号</param>
+        /// <returns>返回 String[]：商品信息 null：失败</returns>
+        public String[] GetGoodsInfo(String _GoodsNo)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand GetGoods = new OracleCommand(@"select * from MarketTerminal_Goods
+                                                              where GoodsNo='" + _GoodsNo + @"'");//查询语句
+                GetGoods.Connection = Connect;//指定连接
+                OracleDataReader Reader = GetGoods.ExecuteReader();//执行查询
+                if (Reader.Read())
+                    return new String[] { Reader[0].ToString(), Reader[1].ToString(), Reader[2].ToString(), Reader[3].ToString(), Reader[4].ToString(),
+                                            Reader[5].ToString(), Reader[6].ToString(), Reader[7].ToString()};//返回信息集
+                else
+                    return null;//无此商品返回null
+            }
+            catch (Exception)
+            {
+                return null;//失败则返回null
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 更新商品信息
+        /// </summary>
+        /// <param name="_GoodsInfo">商品信息集</param>
+        /// <returns>返回 true：成功 false：失败</returns>
+        public Boolean UpdateGoodsInfo(String[] _GoodsInfo)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand UpGoods = new OracleCommand(@"update MarketTerminal_Goods
+                                                             set GOODSNAME='" + _GoodsInfo[1] + "'," +
+                                                                 "IN_PRICE='" + _GoodsInfo[2] + "'," +
+                                                                 "OUT_PRICE='" + _GoodsInfo[3] + "'," +
+                                                                 "MARKETLEFT='" + _GoodsInfo[4] + "'," +
+                                                                 "TRUNKLEFT='" + _GoodsInfo[5] + "'," +
+                                                                 "BRAND='" + _GoodsInfo[6] + "'," +
+                                                                 "UNIT='" + _GoodsInfo[7] + "' " +
+                                                                 "where GOODSNO='" + _GoodsInfo[0] + "'");//用于存放更新商品语句
+                UpGoods.Connection = Connect;//指定连接
+                UpGoods.ExecuteNonQuery();//执行修改
+                return true;//修改成功
+            }
+            catch (Exception)
+            {
+                return false;//修改失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 获得账目列表
+        /// </summary>
+        /// <returns>返回 账目列表</returns>
+        public List<String[]> GetAccountList()
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            List<String[]> AccountList = new List<string[]>();//初始化账目列表
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand QueryAccountList = new OracleCommand(@"select * from MarketTerminal_Account");//查询语句
+                QueryAccountList.Connection = Connect;//指定连接
+                OracleDataReader AccountListReader = QueryAccountList.ExecuteReader();//执行查询
+                while (AccountListReader.Read())//按行读取，直到结尾
+                {
+                    AccountList.Add(new String[] {AccountListReader[0].ToString(),//账目流水号
+                                                    AccountListReader[1].ToString(),//商品编号
+                                                    AccountListReader[2].ToString(),//商品名
+                                                    AccountListReader[3].ToString(),//进价
+                                                    AccountListReader[4].ToString(),//售价
+                                                    AccountListReader[5].ToString(),//出售量
+                                                    AccountListReader[6].ToString(),//单位
+                                                    AccountListReader[7].ToString()});//利润
+                }
+                return AccountList;//查询成功
+            }
+            catch (Exception)
+            {
+                return null;//查询账目表失败则返回null
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 更新账目信息
+        /// </summary>
+        /// <param name="_GoodsInfo">账目信息集</param>
+        /// <returns>返回 true：成功 false：失败</returns>
+        public Boolean UpdateAccountInfo(String[] _AccountInfo)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand UpAccount = new OracleCommand(@"update MarketTerminal_Account
+                                                             set GOODSNO='" + _AccountInfo[1] + "'," +
+                                                                 "GOODSNAME='" + _AccountInfo[2] + "'," +
+                                                                 "IN_PRICE='" + _AccountInfo[3] + "'," +
+                                                                 "OUT_PRICE='" + _AccountInfo[4] + "'," +
+                                                                 "OUTNUM='" + _AccountInfo[5] + "'," +
+                                                                 "UNIT='" + _AccountInfo[6] + "'," +
+                                                                 "PRICE='" + _AccountInfo[7] + "' " +
+                                                                 "where ACCOUNTNO='" + _AccountInfo[0] + "'");//用于存放更新商品语句
+                UpAccount.Connection = Connect;//指定连接
+                UpAccount.ExecuteNonQuery();//执行修改
+                return true;//修改成功
+            }
+            catch (Exception)
+            {
+                return false;//修改失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 删除账目
+        /// </summary>
+        /// <param name="_GoodsNo">账目编号</param>
+        /// <returns>返回 true：成功 false：失败</returns>
+        public Boolean DeleteAccount(String _AccountNo)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand DeleteAcount = new OracleCommand(@"delete 
+                                                                    from MARKETTERMINAL_Account
+                                                                    where ACCOUNTNO='" + _AccountNo + @"'");//账目行删除语句
+                DeleteAcount.Connection = Connect;//指定连接
+                DeleteAcount.ExecuteNonQuery();//执行删除
+                return true;//删除成功
+            }
+            catch (Exception)
+            {
+                return false;//删除失败
             }
             finally
             {

@@ -35,3 +35,6 @@ D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.TrunkMgr.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.AccountMgr.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.StaffModify.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.StaffAdd.resources
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.GoodsAdd.resources
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.GoodsModify.resources
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.AccountModify.resources

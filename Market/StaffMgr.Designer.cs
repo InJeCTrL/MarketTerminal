@@ -109,12 +109,12 @@
             // 增加ToolStripMenuItem
             // 
             this.增加ToolStripMenuItem.Name = "增加ToolStripMenuItem";
-            this.增加ToolStripMenuItem.Size = new System.Drawing.Size(149, 6);
+            this.增加ToolStripMenuItem.Size = new System.Drawing.Size(97, 6);
             // 
             // 增加ToolStripMenuItem1
             // 
             this.增加ToolStripMenuItem1.Name = "增加ToolStripMenuItem1";
-            this.增加ToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.增加ToolStripMenuItem1.Size = new System.Drawing.Size(100, 22);
             this.增加ToolStripMenuItem1.Text = "增加";
             this.增加ToolStripMenuItem1.Click += new System.EventHandler(this.增加ToolStripMenuItem1_Click);
             // 
@@ -139,6 +139,7 @@
             this.Controls.Add(this.listView1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "StaffMgr";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "员工管理";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.StaffMgr_FormClosed);
             this.contextMenuStrip1.ResumeLayout(false);

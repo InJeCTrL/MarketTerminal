@@ -72,6 +72,12 @@
     <Compile Include="AccountMgr.Designer.cs">
       <DependentUpon>AccountMgr.cs</DependentUpon>
     </Compile>
+    <Compile Include="AccountModify.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AccountModify.Designer.cs">
+      <DependentUpon>AccountModify.cs</DependentUpon>
+    </Compile>
     <Compile Include="CheckGoods.cs" />
     <Compile Include="DataBaseManager.cs" />
     <Compile Include="DB_Login.cs">
@@ -85,6 +91,18 @@
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GoodsAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GoodsAdd.Designer.cs">
+      <DependentUpon>GoodsAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GoodsModify.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GoodsModify.Designer.cs">
+      <DependentUpon>GoodsModify.cs</DependentUpon>
     </Compile>
     <Compile Include="Login.cs">
       <SubType>Form</SubType>
@@ -134,11 +152,20 @@
     <EmbeddedResource Include="AccountMgr.resx">
       <DependentUpon>AccountMgr.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AccountModify.resx">
+      <DependentUpon>AccountModify.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DB_Login.resx">
       <DependentUpon>DB_Login.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GoodsAdd.resx">
+      <DependentUpon>GoodsAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GoodsModify.resx">
+      <DependentUpon>GoodsModify.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
