@@ -11,6 +11,9 @@ using AForge.Video.FFMPEG;
 using AForge.Controls;
 using ZXing;
 using System.Drawing;
+using System.Net;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Market
 {
@@ -85,8 +88,72 @@ namespace Market
         /// <returns>返回 String[]：成功 null：失败</returns>
         public String[] GetGoodsInfo(String _GoodsNo)
         {
-
-            return new String[] { _GoodsNo, "", "", "", "", "", "", "" };
+            CookieContainer Cookie = GetCookie("http://search.anccnet.com/writeSession.aspx?responseResult=check_ok");//尝试获取Cookie
+            if (Cookie == null)
+                return null;
+            else
+            {
+                String PageText = GetPageText(@"http://search.anccnet.com/searchResult2.aspx?keyword=" + _GoodsNo, "http://search.anccnet.com", Cookie);//尝试获得商品简略信息网页源代码
+                if (PageText == null)//获取失败
+                    return new String[] { _GoodsNo, "", "", "", "", "", "", "" };
+                else
+                {
+                    PageText = Regex.Replace(PageText, @"\s", "");//去空格
+                    String RegStr = @"<dt>商标：</dt><dd>(\S+?)</dd><dt>\S+<dt>名称：</dt><dd>(\S+?)</dd><dt>";//匹配商品名称
+                    Match MatchResult = Regex.Match(PageText, RegStr);//尝试匹配
+                    return new String[] { _GoodsNo, MatchResult.Groups[2].Value, "", "", "", "", MatchResult.Groups[1].Value, "" };
+                }
+            }
+        }
+        /// <summary> 获取指定网页源代码
+        /// </summary>
+        /// <param name="TargetURL">目标网页地址</param>
+        /// <param name="Referer">伪造的先前页面</param>
+        /// /// <param name="Referer">伪造的Cookie</param>
+        /// <returns>返回 String：网页源代码 null：失败</returns>
+        private String GetPageText(String TargetURL,String Referer,CookieContainer Cookie)
+        {
+            try
+            {
+                HttpWebRequest Request = (HttpWebRequest)WebRequest.Create(TargetURL);//确认请求地址
+                Request.Method = "GET";//GET方法获得网页内容
+                Request.Referer = Referer;//伪造referer绕过验证
+                Request.CookieContainer = Cookie;//伪造Cookie绕过验证
+                Request.Timeout = 5000;//超时时间5秒
+                Request.ReadWriteTimeout = 5000;//读写超时时间5秒
+                HttpWebResponse PageInfo = (HttpWebResponse)Request.GetResponse();//获取网页信息
+                StreamReader Reader = new StreamReader(PageInfo.GetResponseStream(), Encoding.Default);//获取网页信息到流中
+                String PageText = Reader.ReadToEnd();//流读入字符串中
+                Reader.Close();//关闭流
+                return PageText;//返回网页源代码
+            }
+            catch (Exception)
+            {
+                return null;//获取失败
+            }
+        }
+        /// <summary> 获取Cookie
+        /// </summary>
+        /// <param name="TargetURL">目标地址</param>
+        /// <returns>返回 Cookie：成功 null：失败</returns>
+        private CookieContainer GetCookie(String TargetURL)
+        {
+            try
+            {
+                HttpWebRequest Request = (HttpWebRequest)WebRequest.Create(TargetURL);//指定目标网址
+                CookieContainer Cookie = new CookieContainer();//初始化CookieContainer
+                Request.CookieContainer = Cookie;//请求Cookie
+                Request.Timeout = 5000;//超时时间5秒
+                Request.ReadWriteTimeout = 5000;//读写超时时间5秒
+                HttpWebResponse Response = (HttpWebResponse)Request.GetResponse();//请求
+                Stream Reader = Response.GetResponseStream();
+                Reader.Close();//关闭流
+                return Cookie;//返回Cookie
+            }
+            catch (Exception)
+            {
+                return null;//失败
+            }
         }
     }
 }
