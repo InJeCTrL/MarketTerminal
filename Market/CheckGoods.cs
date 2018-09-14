@@ -85,6 +85,7 @@ namespace Market
         /// <returns>返回 String[]：成功 null：失败</returns>
         public String[] GetGoodsInfo(String _GoodsNo)
         {
+
             return new String[] { _GoodsNo, "", "", "", "", "", "", "" };
         }
     }

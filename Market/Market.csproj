@@ -78,6 +78,12 @@
     <Compile Include="AccountModify.Designer.cs">
       <DependentUpon>AccountModify.cs</DependentUpon>
     </Compile>
+    <Compile Include="BadLogView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BadLogView.Designer.cs">
+      <DependentUpon>BadLogView.cs</DependentUpon>
+    </Compile>
     <Compile Include="CheckGoods.cs" />
     <Compile Include="DataBaseManager.cs" />
     <Compile Include="DB_Login.cs">
@@ -111,11 +117,23 @@
       <DependentUpon>Login.cs</DependentUpon>
     </Compile>
     <Compile Include="LoginCheck.cs" />
+    <Compile Include="ModifyNum.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModifyNum.Designer.cs">
+      <DependentUpon>ModifyNum.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pause.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Pause.Designer.cs">
       <DependentUpon>Pause.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Payment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Payment.Designer.cs">
+      <DependentUpon>Payment.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -155,6 +173,9 @@
     <EmbeddedResource Include="AccountModify.resx">
       <DependentUpon>AccountModify.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="BadLogView.resx">
+      <DependentUpon>BadLogView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DB_Login.resx">
       <DependentUpon>DB_Login.cs</DependentUpon>
     </EmbeddedResource>
@@ -170,8 +191,14 @@
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ModifyNum.resx">
+      <DependentUpon>ModifyNum.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Pause.resx">
       <DependentUpon>Pause.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Payment.resx">
+      <DependentUpon>Payment.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

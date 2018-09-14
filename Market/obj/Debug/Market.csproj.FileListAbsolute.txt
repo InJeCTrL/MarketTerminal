@@ -38,3 +38,6 @@ D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.StaffAdd.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.GoodsAdd.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.GoodsModify.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.AccountModify.resources
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.ModifyNum.resources
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.Payment.resources
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.BadLogView.resources

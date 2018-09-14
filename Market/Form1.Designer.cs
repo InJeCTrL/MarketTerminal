@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.videoSourcePlayer1 = new AForge.Controls.VideoSourcePlayer();
@@ -52,13 +53,22 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.修改数量ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.删除本条ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
             this.groupBox1.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
@@ -67,6 +77,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(111, 44);
             this.button1.TabIndex = 1;
+            this.button1.TabStop = false;
             this.button1.Text = "退出";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -77,6 +88,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(111, 44);
             this.button2.TabIndex = 2;
+            this.button2.TabStop = false;
             this.button2.Text = "开始营业";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -97,6 +109,7 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(111, 44);
             this.button3.TabIndex = 4;
+            this.button3.TabStop = false;
             this.button3.Text = "暂停营业(ESC)";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -122,8 +135,10 @@
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(357, 97);
             this.listView1.TabIndex = 5;
+            this.listView1.TabStop = false;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
             // 
             // columnHeader1
             // 
@@ -144,7 +159,7 @@
             // 
             // columnHeader5
             // 
-            this.columnHeader5.Text = "数量（双击可修改）";
+            this.columnHeader5.Text = "数量";
             // 
             // columnHeader6
             // 
@@ -199,8 +214,10 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(111, 44);
             this.button4.TabIndex = 10;
+            this.button4.TabStop = false;
             this.button4.Text = "结账(Enter)";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button5
             // 
@@ -209,8 +226,10 @@
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(111, 44);
             this.button5.TabIndex = 11;
+            this.button5.TabStop = false;
             this.button5.Text = "取消交易";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // label5
             // 
@@ -236,9 +255,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboBox1);
             this.groupBox1.Controls.Add(this.textBox2);
             this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.button6);
             this.groupBox1.Location = new System.Drawing.Point(33, 196);
@@ -253,7 +272,7 @@
             this.textBox2.Location = new System.Drawing.Point(86, 69);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(186, 21);
-            this.textBox2.TabIndex = 4;
+            this.textBox2.TabIndex = 1;
             this.textBox2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox2_KeyPress);
             // 
             // label8
@@ -264,14 +283,6 @@
             this.label8.Size = new System.Drawing.Size(41, 12);
             this.label8.TabIndex = 3;
             this.label8.Text = "数量：";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(86, 28);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(186, 21);
-            this.textBox1.TabIndex = 2;
-            this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
             // 
             // label7
             // 
@@ -287,9 +298,10 @@
             this.button6.Location = new System.Drawing.Point(96, 113);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(111, 44);
-            this.button6.TabIndex = 0;
+            this.button6.TabIndex = 3;
             this.button6.Text = "添加";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // button7
             // 
@@ -297,16 +309,18 @@
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(111, 44);
             this.button7.TabIndex = 15;
+            this.button7.TabStop = false;
             this.button7.Text = "系统设置";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(223, 62);
+            this.button8.Location = new System.Drawing.Point(373, 77);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(111, 44);
             this.button8.TabIndex = 16;
+            this.button8.TabStop = false;
             this.button8.Text = "商品管理";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
@@ -317,9 +331,80 @@
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(111, 44);
             this.button9.TabIndex = 17;
+            this.button9.TabStop = false;
             this.button9.Text = "账目管理";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.修改数量ToolStripMenuItem,
+            this.删除本条ToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(125, 48);
+            // 
+            // 修改数量ToolStripMenuItem
+            // 
+            this.修改数量ToolStripMenuItem.Name = "修改数量ToolStripMenuItem";
+            this.修改数量ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.修改数量ToolStripMenuItem.Text = "修改数量";
+            this.修改数量ToolStripMenuItem.Click += new System.EventHandler(this.修改数量ToolStripMenuItem_Click);
+            // 
+            // 删除本条ToolStripMenuItem
+            // 
+            this.删除本条ToolStripMenuItem.Name = "删除本条ToolStripMenuItem";
+            this.删除本条ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.删除本条ToolStripMenuItem.Text = "删除本条";
+            this.删除本条ToolStripMenuItem.Click += new System.EventHandler(this.删除本条ToolStripMenuItem_Click);
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.comboBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(87, 28);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(185, 20);
+            this.comboBox1.TabIndex = 0;
+            this.comboBox1.TextUpdate += new System.EventHandler(this.comboBox1_TextUpdate);
+            // 
+            // timer2
+            // 
+            this.timer2.Enabled = true;
+            this.timer2.Interval = 5000;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.toolStripSplitButton1});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 412);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(698, 22);
+            this.statusStrip1.TabIndex = 19;
+            this.statusStrip1.Text = "超市进销终端";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(56, 18);
+            this.toolStripStatusLabel1.Text = "状态正常";
+            // 
+            // toolStripSplitButton1
+            // 
+            this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripSplitButton1.DropDownButtonWidth = 0;
+            this.toolStripSplitButton1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.toolStripSplitButton1.ForeColor = System.Drawing.Color.Red;
+            this.toolStripSplitButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButton1.Image")));
+            this.toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripSplitButton1.Name = "toolStripSplitButton1";
+            this.toolStripSplitButton1.Size = new System.Drawing.Size(25, 21);
+            this.toolStripSplitButton1.Text = "！";
+            this.toolStripSplitButton1.Visible = false;
+            this.toolStripSplitButton1.ButtonClick += new System.EventHandler(this.toolStripSplitButton1_ButtonClick);
             // 
             // Form1
             // 
@@ -329,6 +414,7 @@
             this.CancelButton = this.button3;
             this.ClientSize = new System.Drawing.Size(698, 434);
             this.ControlBox = false;
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.button9);
             this.Controls.Add(this.button8);
             this.Controls.Add(this.button7);
@@ -348,12 +434,15 @@
             this.Controls.Add(this.button1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "超市进销终端";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.contextMenuStrip1.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -362,10 +451,8 @@
         #endregion
 
         private System.Windows.Forms.Button button1;
-        public AForge.Controls.VideoSourcePlayer videoSourcePlayer1;
         private System.Windows.Forms.Button button3;
         public System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
@@ -385,11 +472,20 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label7;
         public System.Windows.Forms.Button button7;
         public System.Windows.Forms.Button button8;
         public System.Windows.Forms.Button button9;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem 修改数量ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 删除本条ToolStripMenuItem;
+        private AForge.Controls.VideoSourcePlayer videoSourcePlayer1;
+        public System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
 
     }
 }

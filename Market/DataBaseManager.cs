@@ -197,7 +197,7 @@ namespace Market
                                                                 begin
                                                                  IF :new.MarketLeft<:old.MarketLeft THEN
                                                                     insert into MARKETTERMINAL_ACCOUNT
-                                                                    values(to_char(systimestamp,'YYYYMMDDHH24MISSFF'),:new.GOODSNO,:new.GOODSName,:new.IN_PRICE,:new.OUT_PRICE,:old.marketleft-:new.marketleft,:new.brand,(:old.marketleft-:new.marketleft)*(:new.OUT_PRICE-:new.IN_PRICE));
+                                                                    values(to_char(systimestamp,'YYYYMMDDHH24MISSFF'),:new.GOODSNO,:new.GOODSName,:new.IN_PRICE,:new.OUT_PRICE,:old.marketleft-:new.marketleft,:new.unit,(:old.marketleft-:new.marketleft)*(:new.OUT_PRICE-:new.IN_PRICE));
                                                                  END IF;
                                                                 end;");//创建触发器语句
                 NewTrigger.Connection = Connect;//指定连接
@@ -766,6 +766,34 @@ namespace Market
                 Connect.Close();//最后必须关闭数据库连接
             }
         }
+        /// <summary> 更新商品数量_货架存量
+        /// </summary>
+        /// <param name="_GoodsNo">商品编号</param>
+        /// <param name="Num">新增数</param>
+        /// <returns>返回 true：成功 false：失败</returns>
+        public Boolean UpdateGoodsNum_MarketLeft(String _GoodsNo, int Num)
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand AddNum = new OracleCommand(@"update MarketTerminal_Goods
+                                                         set MARKETLEFT = MARKETLEFT + '" + Num + @"'
+                                                         where GoodsNo = '" + _GoodsNo + @"'");//用于存放增加数量语句
+                AddNum.Connection = Connect;//指定连接
+                AddNum.ExecuteNonQuery();//执行更新
+                return true;//更新成功
+            }
+            catch (Exception)
+            {
+                return false;//更新失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
         /// <summary> 新增商品
         /// </summary>
         /// <param name="_StaffInfo">商品信息集</param>
@@ -947,6 +975,102 @@ namespace Market
             catch (Exception)
             {
                 return false;//删除失败
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 模糊查找商品编号
+        /// </summary>
+        /// <param name="_GoodsNo">商品编号(part)</param>
+        /// <returns>返回 String[]：商品信息 null：失败</returns>
+        public List<String[]> GetGoodsInfo_Part(String _GoodsNo)
+        {
+            List<String[]> InfoList = new List<string[]>();//找到的商品列表
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand GetGoods = new OracleCommand(@"select * from MarketTerminal_Goods
+                                                              where GoodsNo like '%" + _GoodsNo + @"%'");//查询语句
+                GetGoods.Connection = Connect;//指定连接
+                OracleDataReader Reader = GetGoods.ExecuteReader();//执行查询
+                while (Reader.Read())
+                {
+                    InfoList.Add(new String[] { Reader[0].ToString(), Reader[1].ToString(), Reader[2].ToString(), Reader[3].ToString(), Reader[4].ToString(),
+                                            Reader[5].ToString(), Reader[6].ToString(), Reader[7].ToString()});
+                }
+                return InfoList;//查询成功
+            }
+            catch (Exception)
+            {
+                return null;//失败则返回null
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 查找货架存量不足的商品
+        /// </summary>
+        /// <param name="Threshold">阈值</param>
+        /// <returns>返回 String[]：商品信息 null：失败</returns>
+        public List<String[]> GetGoodsMarketleftNotOk(int Threshold = 10)
+        {
+            List<String[]> InfoList = new List<string[]>();//找到的商品列表
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand GetGoods = new OracleCommand(@"select * from MarketTerminal_Goods
+                                                              where Marketleft < '" + Threshold + @"'");//查询语句
+                GetGoods.Connection = Connect;//指定连接
+                OracleDataReader Reader = GetGoods.ExecuteReader();//执行查询
+                while (Reader.Read())
+                {
+                    InfoList.Add(new String[] { Reader[0].ToString(), Reader[1].ToString(), Reader[2].ToString(), Reader[3].ToString(), Reader[4].ToString(),
+                                            Reader[5].ToString(), Reader[6].ToString(), Reader[7].ToString()});
+                }
+                return InfoList;//查询成功
+            }
+            catch (Exception)
+            {
+                return null;//失败则返回null
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 查找库存量不足的商品
+        /// </summary>
+        /// <param name="Threshold">阈值</param>
+        /// <returns>返回 String[]：商品信息 null：失败</returns>
+        public List<String[]> GetGoodsTrunkleftNotOk(int Threshold = 50)
+        {
+            List<String[]> InfoList = new List<string[]>();//找到的商品列表
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand GetGoods = new OracleCommand(@"select * from MarketTerminal_Goods
+                                                              where TrunkLeft < '" + Threshold + @"'");//查询语句
+                GetGoods.Connection = Connect;//指定连接
+                OracleDataReader Reader = GetGoods.ExecuteReader();//执行查询
+                while (Reader.Read())
+                {
+                    InfoList.Add(new String[] { Reader[0].ToString(), Reader[1].ToString(), Reader[2].ToString(), Reader[3].ToString(), Reader[4].ToString(),
+                                            Reader[5].ToString(), Reader[6].ToString(), Reader[7].ToString()});
+                }
+                return InfoList;//查询成功
+            }
+            catch (Exception)
+            {
+                return null;//失败则返回null
             }
             finally
             {

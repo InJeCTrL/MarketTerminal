@@ -145,7 +145,18 @@ namespace Market
             {
                 String Code_str = ChkGoods.CheckBarCode(SnapShot);//存放条码值字符串
                 if (Code_str != null)
-                    MessageBox.Show(Code_str);//若条码非空则显示条码
+                {
+                    if (DBMgr.IsGoodsExists(Code_str))//若已存在此类商品，才进行响应
+                    {
+                        String[] tGoodsInfo = DBMgr.GetGoodsInfo(Code_str);//获取商品信息存储到临时信息集中
+                        if (int.Parse(tGoodsInfo[4].ToString()) > 0)//若检测到商品数量不为空
+                            AddGoodsToListview(Code_str);//将商品添加到列表中
+                    }
+                    else//DB中不存在此类商品
+                    {
+                        Code_str = null;//存储的临时条码值置空
+                    }
+                }
             }
         }
         /// <summary> 屏蔽非常规退出(Alt+F4)
@@ -166,15 +177,6 @@ namespace Market
             if (!Char.IsNumber(Input) && Input != (char)8)
                 return false;//若输入为非数字并且不是backspace则返回false
             return true;
-        }
-        /// <summary> 判断输入的编号是否只为数字
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (IsNumInput(e.KeyChar) == false)
-                e.Handled = true;//过滤非数字
         }
         /// <summary> 判断输入的数量是否只为数字
         /// </summary>
@@ -232,6 +234,224 @@ namespace Market
             }
             else
                 MessageBox.Show(null, "权限不足，请与管理员联系！", "拒绝访问");
+        }
+        /// <summary> 添加商品到listview中
+        /// </summary>
+        /// <param name="GoodsNo">商品编号</param>
+        private void AddGoodsToListview(String GoodsNo)
+        {
+            String[] tGoodsInfo = DBMgr.GetGoodsInfo(GoodsNo);//获取商品信息集
+            Boolean HasA = false;//标记是否已有至少一个商品在列表中
+            int i;//若已有至少一个商品在列表中，用于保存待更新列表项下标
+            for (i = 0; i < listView1.Items.Count; i++)
+            {
+                if (listView1.Items[i].SubItems[0].Text.Equals(GoodsNo))//若商品已存在于列表中
+                {
+                    HasA = true;//标记已有至少一个商品在列表中
+                    break;//保存i
+                }
+            }
+            if (!HasA)//若没有该商品在列表中
+                listView1.Items.Add(new ListViewItem(new String[] { tGoodsInfo[0], tGoodsInfo[1], tGoodsInfo[2], tGoodsInfo[3], "1", tGoodsInfo[3] }));//添加商品
+            else//已有商品
+            {
+                listView1.Items[i].SubItems[4].Text = (int.Parse(listView1.Items[i].SubItems[4].Text) + 1).ToString();//更新预购买个数
+                listView1.Items[i].SubItems[5].Text = (int.Parse(listView1.Items[i].SubItems[4].Text) * double.Parse(tGoodsInfo[3])).ToString();//更新金额
+            }
+            UpdateTotal();//更新总数量与总金额显示
+            UpdateBtnStatus();//更新结账与取消交易按钮状态
+        }
+        /// <summary> 用于过滤非法右键操作
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listView1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right && //列表项右键时触发
+                listView1.FocusedItem.Index >= 0 &&
+                listView1.SelectedItems.Count == 1)//选定了一个列表项
+            {
+                contextMenuStrip1.Show(listView1, e.Location);//相对于列表弹出右键菜单
+            }
+        }
+        /// <summary> 删除选项
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 删除本条ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            listView1.Items.RemoveAt(listView1.FocusedItem.Index);//删除选定商品
+            UpdateTotal();//更新总数量与总金额显示
+            UpdateBtnStatus();//更新结账与取消交易按钮状态
+        }
+        /// <summary> 修改数量选项
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 修改数量ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ModifyNum ModifyNum_frm = new ModifyNum();//实例化修改数量窗体
+            ModifyNum_frm.ShowDialog();//模态显示数量修改窗体
+            UpdateTotal();//更新总数量与总金额显示
+        }
+        /// <summary> 取消本次交易按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button5_Click(object sender, EventArgs e)
+        {
+            button4.Enabled = false;//取消交易后禁止结账
+            button5.Enabled = false;//禁止多次取消交易
+            listView1.Items.Clear();//清空购物车
+            UpdateTotal();//更新总数量与总金额显示
+        }
+        /// <summary> 更新商品总数量与总金额
+        /// </summary>
+        private void UpdateTotal()
+        {
+            int TotalNum = 0;//临时保存总数量
+            double TotalMoney = 0;//临时保存总金额
+            for (int i = 0; i < listView1.Items.Count; i++)
+            {
+                TotalNum += int.Parse(listView1.Items[i].SubItems[4].Text);//增加总数量
+                TotalMoney += double.Parse(listView1.Items[i].SubItems[5].Text);//增加总金额
+            }
+            label2.Text = TotalNum.ToString();//更新总数量
+            label4.Text = TotalMoney.ToString();//更新总金额
+        }
+        /// <summary> 结账按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Payment Payment_frm = new Payment(label4.Text);//实例化结算窗体
+            if (Payment_frm.ShowDialog() == DialogResult.Yes)
+            {//若已成功完成交易
+                for (int i = 0; i < listView1.Items.Count; i++)
+                {
+                    DBMgr.UpdateGoodsNum_MarketLeft(listView1.Items[i].SubItems[0].Text, -int.Parse(listView1.Items[i].SubItems[4].Text));//更新商品数目
+                }
+                button5.PerformClick();//窗体上模拟取消交易
+            }
+        }
+        /// <summary> 更新结账按钮与取消交易按钮状态
+        /// </summary>
+        private void UpdateBtnStatus()
+        {
+            if (label2.Text.Equals("0"))
+            {
+                button4.Enabled = false;//禁止结账
+                button5.Enabled = false;//禁止取消交易
+            }
+            else
+            {
+                button4.Enabled = true;//运行结账
+                button5.Enabled = true;//运行取消交易
+            }
+        }
+        /// <summary> 输入商品编号检测
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void comboBox1_TextUpdate(object sender, EventArgs e)
+        {
+            List<String[]> tGoodsList = DBMgr.GetGoodsInfo_Part(comboBox1.Text);//获取模糊搜索的商品列表
+            comboBox1.Items.Clear();//comboBox下拉菜单清空
+            if (tGoodsList != null && tGoodsList.Count != 0)
+            {//模糊搜索成功
+                for (int i = 0; i < tGoodsList.Count; i++)
+                {//顺序加入列表内容
+                    comboBox1.Items.Add(tGoodsList.ElementAt(i)[0]);//显示商品编号
+                }
+                comboBox1.DroppedDown = true;//显示下拉列表
+            }
+            comboBox1.Select(comboBox1.Text.Length, 0);//光标重新移动到尾部
+            Cursor = Cursors.Default;//防止光标被遮盖
+        }
+        /// <summary> 手动添加按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button6_Click(object sender, EventArgs e)
+        {
+            String GoodsNo = comboBox1.Text;//商品编号
+            if (DBMgr.IsGoodsExists(GoodsNo))
+            {//若商品存在
+                String[] tGoodsInfo = DBMgr.GetGoodsInfo(GoodsNo);//临时保存商品信息
+                if (textBox2.Text.Equals(""))
+                {
+                    MessageBox.Show(null, "添加数量为空！", "添加失败");//提示商品不存在
+                }
+                else
+                {
+                    int i;//标记商品在购物车中位置s
+                    int AddNum = int.Parse(textBox2.Text);//添加量赋值
+                    for (i = 0; i < listView1.Items.Count; i++)
+                    {
+                        if (listView1.Items[i].SubItems[0].Text.Equals(GoodsNo))
+                        {//找到已添加过该商品
+                            break;
+                        }
+                    }
+                    if ((listView1.Items.Count == 0 &&//购物车中没有商品
+                         AddNum <= int.Parse(tGoodsInfo[4])) ||//添加量小等于货架存量
+                        (i < listView1.Items.Count &&//购物车中没有添加过该商品
+                        (AddNum + int.Parse(listView1.Items[i].SubItems[4].Text) <= int.Parse(tGoodsInfo[4]))))//商品货架存量大于等于添加量
+                    {
+                        for (int j = 0; j < AddNum; j++)
+                            AddGoodsToListview(GoodsNo);//循环添加
+                        comboBox1.Text = "";//商品编码搜索位清空
+                        textBox2.Text = "";//数量填写位清空
+                    }
+                    else
+                    {//超出货架存量
+                        MessageBox.Show(null, "添加数量超过该商品货架存量！", "添加失败");//提示商品超量
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show(null, "该商品未入库！", "添加失败");//提示商品不存在
+            }
+        }
+        /// <summary> 检测各商品货架存量、库存量并预警，5秒检测一次
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            List<String[]> BadMarketLeft = DBMgr.GetGoodsMarketleftNotOk();//获取货架存量不足的商品
+            List<String[]> BadTrunkLeft = DBMgr.GetGoodsTrunkleftNotOk();//获取库存量不足的商品
+            if (BadMarketLeft == null || BadTrunkLeft == null)//查询失败
+            {
+                toolStripStatusLabel1.Text = "货架存量、库存检测失败！";
+                toolStripSplitButton1.Visible = false;//隐藏日志按钮
+                toolStripStatusLabel1.ForeColor = Color.Red;//标红
+            }
+            else if (BadMarketLeft.Count != 0 || BadTrunkLeft.Count != 0)
+            {
+                toolStripStatusLabel1.Text = "需要补货/进货！";
+                toolStripSplitButton1.Visible = true;//显示日志按钮
+                toolStripStatusLabel1.ForeColor = Color.Red;//标红
+            }
+            else
+            {
+                toolStripStatusLabel1.Text = "状态正常";
+                toolStripSplitButton1.Visible = false;//隐藏日志按钮
+                toolStripStatusLabel1.ForeColor = Color.Black;//颜色恢复
+            }
+        }
+        /// <summary> 告警日志查看
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripSplitButton1_ButtonClick(object sender, EventArgs e)
+        {
+            List<String[]> BadMarketLeft = DBMgr.GetGoodsMarketleftNotOk();//获取货架存量不足的商品
+            List<String[]> BadTrunkLeft = DBMgr.GetGoodsTrunkleftNotOk();//获取库存量不足的商品
+            BadLogView BadLogView_frm = new BadLogView(BadMarketLeft, BadTrunkLeft);//实例化告警日志窗体
+            BadLogView_frm.ShowDialog();//模态显示
         }
     }
 }
