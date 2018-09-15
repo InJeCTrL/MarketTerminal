@@ -13,6 +13,8 @@ namespace Market
         public Login()
         {
             InitializeComponent();
+            this.Focus();//登录窗体获取焦点
+            textBox1.Focus();//工号输入框获取焦点
         }
         /// <summary> 验证员工口令是否正确
         /// </summary>
