@@ -67,9 +67,9 @@ namespace Market
                 Password = _Password;//保存密码
                 Success = true;//标记数据库登录成功
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                MessageBox.Show(null, "无法连接到Oracle数据库，请检查Oracle数据库是否正常安装或用户名密码错误！", "数据库连接失败");//无法连接数据库则提示
+                MessageBox.Show(null, "无法连接到Oracle数据库，请检查Oracle数据库XE(x86)是否正常安装或用户名密码错误！", "数据库连接失败");//无法连接数据库则提示
             }
             finally
             {
@@ -101,9 +101,8 @@ namespace Market
                 DefaultAdminInsert.ExecuteNonQuery();//执行插入
                 return true;//创建成功、插入成功
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                MessageBox.Show(e.ToString());
                 return false;//创建员工表失败则返回false
             }
             finally

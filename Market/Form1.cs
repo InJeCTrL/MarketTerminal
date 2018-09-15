@@ -85,7 +85,11 @@ namespace Market
             label5.SetBounds(label6.Left + label6.Width + 30, 30, 147, 27);//设置本机工号(Num)Label位置
             button4.SetBounds(label3.Left - 60, label3.Top + 20 + 40, 111, 44);//设置结账按钮位置
             button5.SetBounds(button4.Left + 111 + 30, button4.Top, 111, 44);//设置取消交易按钮位置
-            groupBox1.SetBounds(30 + 30, videoSourcePlayer1.Top, 301, 169);//设置员工手动输入区位置
+            groupBox1.SetBounds(30 + 30, videoSourcePlayer1.Top, videoSourcePlayer1.Left - 60 - 60, 169);//设置员工手动输入区位置
+            comboBox1.SetBounds(87,28,groupBox1.Width - 87 - 20,20);//设置手动输入条码框位置
+            comboBox1.Refresh();//重绘条码输入框
+            textBox2.SetBounds(87, 69, groupBox1.Width - 87 - 20, 20);//设置手动输入数量位置
+            button6.SetBounds(groupBox1.Width / 2 - 55, 113, 111, 44);//设置手动输入区按钮位置
         }
         /// <summary> 开始营业时设置各控件状态
         /// </summary>
