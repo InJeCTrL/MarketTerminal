@@ -1,6 +1,3 @@
-D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\Market.exe.config
-D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\Market.exe
-D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\Market.pdb
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Controls.dll
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.dll
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Imaging.dll
@@ -15,8 +12,6 @@ D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.csprojResolveAssembly
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.Form1.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.Properties.Resources.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.csproj.GenerateResource.Cache
-D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.exe
-D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.pdb
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Imaging.Formats.dll
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Video.DirectShow.dll
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Video.FFMPEG.dll
@@ -41,3 +36,8 @@ D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.AccountModify.resourc
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.ModifyNum.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.Payment.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.BadLogView.resources
+D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\MarketTerminal.exe.config
+D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\MarketTerminal.exe
+D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\MarketTerminal.pdb
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\MarketTerminal.exe
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\MarketTerminal.pdb

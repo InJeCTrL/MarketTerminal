@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using AForge.Imaging;
-using AForge.Imaging.Filters;
-using AForge.Video;
 using AForge.Video.DirectShow;
-using AForge.Video.FFMPEG;
 using AForge.Controls;
 using ZXing;
 using System.Drawing;
