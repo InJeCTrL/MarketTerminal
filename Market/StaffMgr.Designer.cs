@@ -142,6 +142,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "员工管理";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.StaffMgr_FormClosed);
+            this.Shown += new System.EventHandler(this.StaffMgr_Shown);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

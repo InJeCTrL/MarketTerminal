@@ -126,5 +126,17 @@ namespace Market
             else
                 this.DialogResult = DialogResult.No;//传回未进行增删改
         }
+        /// <summary> ListView各列锚定
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StaffMgr_Shown(object sender, EventArgs e)
+        {
+            int ListWidth = listView1.Width;//列表框宽度
+            listView1.Columns[0].Width = (int)(ListWidth * 0.1960297);//员工号宽度
+            listView1.Columns[1].Width = (int)(ListWidth * 0.2704714);//姓名宽度
+            listView1.Columns[2].Width = (int)(ListWidth * 0.2084367);//超级管理员宽度
+            listView1.Columns[3].Width = (int)(ListWidth * 0.3126550);//密码宽度
+        }
     }
 }

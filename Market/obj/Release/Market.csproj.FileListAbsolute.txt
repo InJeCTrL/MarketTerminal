@@ -40,3 +40,8 @@ D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\Market.TrunkMgr.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\Market.csproj.GenerateResource.Cache
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\MarketTerminal.exe
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\MarketTerminal.pdb
+D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\MarketTerminal.exe.manifest
+D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\MarketTerminal.application
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\MarketTerminal.exe.manifest
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\MarketTerminal.application
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\Market.csprojResolveAssemblyReference.cache

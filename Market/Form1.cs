@@ -62,34 +62,40 @@ namespace Market
         /// <param name="e"></param>
         private void Form1_Shown(object sender, EventArgs e)
         {
-            label5.Text = StaffCode;//设置工号显示
-            button1.SetBounds(this.Size.Width - 110 - 30, 30, 111, 44);//设置关闭系统按钮位置
-            button7.SetBounds(button1.Left - 20 - 111, button1.Top, 111, 44);//设置系统设置按钮位置
-            button9.SetBounds(button7.Left - 20 - 111, button7.Top, 111, 44);//设置账目管理按钮位置
-            button8.SetBounds(button9.Left - 20 - 111, button9.Top, 111, 44);//设置商品管理按钮位置
-            button3.SetBounds(button8.Left - 20 - 111, button8.Top, 111,44);//设置暂停营业按钮位置
-            button2.SetBounds(button3.Left - 20 - 111, button3.Top, 111, 44);//设置开始营业按钮位置
-            videoSourcePlayer1.SetBounds(this.Size.Width / 2 - 150, this.Height - 219 - 30, 301, 219);//设置视频输出区位置
-            listView1.SetBounds(30,button1.Top + 44 + 50,this.Width - 60,videoSourcePlayer1.Top - button1.Top - 44 - 80);
+            int BtnWidth = (int)(this.Width * 0.0812);//计算按钮统一宽度
+            int BtnHeight = (int)(this.Height * 0.057292);//计算按钮高度
+            int Distance_X = (int)(this.Width * 0.01464128);//计算横向间距
+            int Distance_Y = (int)(this.Height * 0.0390625);//计算纵向间距
+            button1.SetBounds(this.Size.Width - BtnWidth - 30, 30, BtnWidth, BtnHeight);//设置关闭系统按钮位置
+            button7.SetBounds(button1.Left - Distance_X - BtnWidth, button1.Top, BtnWidth, BtnHeight);//设置系统设置按钮位置
+            button9.SetBounds(button7.Left - Distance_X - BtnWidth, button7.Top, BtnWidth, BtnHeight);//设置账目管理按钮位置
+            button8.SetBounds(button9.Left - Distance_X - BtnWidth, button9.Top, BtnWidth, BtnHeight);//设置商品管理按钮位置
+            button3.SetBounds(button8.Left - Distance_X - BtnWidth, button8.Top, BtnWidth, BtnHeight);//设置暂停营业按钮位置
+            button2.SetBounds(button3.Left - Distance_X - BtnWidth, button3.Top, BtnWidth, BtnHeight);//设置开始营业按钮位置
+            listView1.SetBounds(30, button1.Bottom + Distance_Y, this.Width - 60, (int)(this.Height * 0.4));//设置购物车列表位置
             listView1.Columns[0].Width = listView1.Width / 5;//设置商品编号标签宽度
             listView1.Columns[1].Width = listView1.Width / 5;//设置商品名称标签宽度
             listView1.Columns[2].Width = listView1.Width / 5;//设置商品进货单价标签宽度
             listView1.Columns[3].Width = listView1.Width / 5;//设置商品销售单价标签宽度
             listView1.Columns[4].Width = listView1.Width / 10;//设置商品数量标签宽度
-            listView1.Columns[5].Width = listView1.Width / 10 - 2;//设置商品总价标签宽度
-            label1.SetBounds(this.Width - 109 - 30 - 150, listView1.Top + listView1.Height + 60, 109, 20);//设置商品总数(str)Label位置
-            label2.SetBounds(label1.Left + label1.Width + 10, label1.Top, 109, 20);//设置商品总数(Num)Label位置
-            label3.SetBounds(label1.Left, label1.Top + 20 + 20, 109, 20);//设置应付总金额(str)Label位置
-            label4.SetBounds(label3.Left + label3.Width + 10, label3.Top, 109, 20);//设置应付总金额(Num)Label位置
-            label6.SetBounds(30, 30, 147, 27);//设置本机工号(str)Label位置
-            label5.SetBounds(label6.Left + label6.Width + 30, 30, 147, 27);//设置本机工号(Num)Label位置
-            button4.SetBounds(label3.Left - 60, label3.Top + 20 + 40, 111, 44);//设置结账按钮位置
-            button5.SetBounds(button4.Left + 111 + 30, button4.Top, 111, 44);//设置取消交易按钮位置
-            groupBox1.SetBounds(30 + 30, videoSourcePlayer1.Top, videoSourcePlayer1.Left - 60 - 60, 169);//设置员工手动输入区位置
-            comboBox1.SetBounds(87,28,groupBox1.Width - 87 - 20,20);//设置手动输入条码框位置
+            listView1.Columns[5].Width = listView1.Width / 10;//设置商品总价标签宽度
+            videoSourcePlayer1.SetBounds(this.Width / 2 - (int)(this.Width * 0.2928257) / 2, listView1.Bottom + Distance_Y , (int)(this.Width * 0.2928257), statusStrip1.Top - listView1.Bottom - 2 * Distance_Y);//设置视频输出区位置
+            label6.SetBounds(30, 30, (int)(this.Width * 0.107613), (int)(this.Height * 0.03515625));//设置本机工号(str)Label位置
+            label5.SetBounds(label6.Right + Distance_X, 30, (int)(this.Width * 0.1076134), label6.Height);//设置本机工号(Num)Label位置
+            label5.Text = StaffCode;//设置工号显示
+            label2.SetBounds(this.Width - 30 - (int)(this.Width * 0.080527), videoSourcePlayer1.Top + Distance_Y, label2.Width, Distance_Y);//设置商品总数(Num)Label位置
+            label4.SetBounds(this.Width - 30 - (int)(this.Width * 0.080527), label2.Bottom + Distance_Y, label4.Width, label2.Height);//设置应付总金额(Num)Label位置
+            label1.SetBounds(videoSourcePlayer1.Right + (int)(this.Width * 0.1317715), label2.Top, label1.Width, Distance_Y);//设置商品总数(str)Label位置
+            label3.SetBounds(label1.Left, label4.Top, label3.Width, Distance_Y);//设置应付总金额(str)Label位置
+            button4.SetBounds(label3.Left - 2 * Distance_X, label3.Bottom + Distance_Y, BtnWidth, BtnHeight);//设置结账按钮位置
+            button5.SetBounds(button4.Right + Distance_X, button4.Top, BtnWidth, BtnHeight);//设置取消交易按钮位置
+            groupBox1.SetBounds(30 + Distance_X, videoSourcePlayer1.Top, videoSourcePlayer1.Left - 30 - 3 * Distance_X, videoSourcePlayer1.Height);//设置员工手动输入区位置
+            label7.SetBounds(Distance_X,2 * Distance_Y,label7.Width,label7.Height);//设置商品编号(str)位置
+            comboBox1.SetBounds(label7.Right + Distance_X, label7.Top, groupBox1.Width - 2 * Distance_X - label7.Right, Distance_Y);//设置手动输入条码框位置
             comboBox1.Refresh();//重绘条码输入框
-            textBox2.SetBounds(87, 69, groupBox1.Width - 87 - 20, 20);//设置手动输入数量位置
-            button6.SetBounds(groupBox1.Width / 2 - 55, 113, 111, 44);//设置手动输入区按钮位置
+            label8.SetBounds(label7.Left,label7.Bottom + Distance_Y,label8.Width,label8.Height);//设置数量(str)label位置
+            textBox2.SetBounds(comboBox1.Left, label8.Top, comboBox1.Width, Distance_Y);//设置手动输入数量位置
+            button6.SetBounds((groupBox1.Width - BtnWidth) / 2, groupBox1.Height - Distance_Y - BtnHeight, BtnWidth, BtnHeight);//设置手动输入区按钮位置
         }
         /// <summary> 开始营业时设置各控件状态
         /// </summary>

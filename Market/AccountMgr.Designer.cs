@@ -187,6 +187,7 @@
             this.Name = "AccountMgr";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "账目管理";
+            this.Shown += new System.EventHandler(this.AccountMgr_Shown);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

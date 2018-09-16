@@ -23,5 +23,16 @@ namespace Market
                     listView1.Items.Add(new ListViewItem(new String[] { BadTrunkLeft.ElementAt(i)[0], BadTrunkLeft.ElementAt(i)[1], "仓库库存存量不足" }));
             }
         }
+        /// <summary> ListView各列锚定
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BadLogView_Shown(object sender, EventArgs e)
+        {
+            int ListWidth = listView1.Width;//列表宽度
+            listView1.Columns[0].Width = (int)(ListWidth * 0.340326);//商品编号宽度
+            listView1.Columns[1].Width = (int)(ListWidth * 0.337995);//商品名称宽度
+            listView1.Columns[2].Width = (int)(ListWidth * 0.312354);//缺货情况宽度
+        }
     }
 }

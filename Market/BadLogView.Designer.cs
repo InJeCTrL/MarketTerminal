@@ -74,6 +74,7 @@
             this.Name = "BadLogView";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "告警日志";
+            this.Shown += new System.EventHandler(this.BadLogView_Shown);
             this.ResumeLayout(false);
 
         }

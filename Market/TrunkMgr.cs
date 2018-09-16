@@ -196,5 +196,21 @@ namespace Market
                 MessageBox.Show(null,"关闭前请先停止进货！","关闭撤销");
             }
         }
+        /// <summary> ListView各列锚定
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TrunkMgr_Shown(object sender, EventArgs e)
+        {
+            int ListWidth = listView1.Width;//列表框宽度
+            listView1.Columns[0].Width = (int)(ListWidth * 0.1719160);//商品编号宽度
+            listView1.Columns[1].Width = (int)(ListWidth * 0.1784776);//商品名称宽度
+            listView1.Columns[2].Width = (int)(ListWidth * 0.1049868);//进货价格宽度
+            listView1.Columns[3].Width = (int)(ListWidth * 0.1049868);//零售价宽度
+            listView1.Columns[4].Width = (int)(ListWidth * 0.1049868);//货架存量宽度
+            listView1.Columns[5].Width = (int)(ListWidth * 0.1049868);//仓库库存宽度
+            listView1.Columns[6].Width = (int)(ListWidth * 0.1443569);//品牌名称宽度
+            listView1.Columns[7].Width = (int)(ListWidth * 0.0787401);//单位宽度
+        }
     }
 }

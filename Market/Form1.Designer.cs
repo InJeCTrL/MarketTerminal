@@ -184,6 +184,7 @@
             this.label2.Size = new System.Drawing.Size(19, 20);
             this.label2.TabIndex = 7;
             this.label2.Text = "0";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label3
             // 
@@ -206,6 +207,7 @@
             this.label4.Size = new System.Drawing.Size(19, 20);
             this.label4.TabIndex = 9;
             this.label4.Text = "0";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // button4
             // 
@@ -306,7 +308,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(96, 113);
+            this.button6.Location = new System.Drawing.Point(86, 96);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(111, 44);
             this.button6.TabIndex = 3;

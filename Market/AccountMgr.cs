@@ -133,5 +133,21 @@ namespace Market
             else
                 Flush(index, textBox1.Text);//按模式查询
         }
+        /// <summary> 显示时配置各控件(listview)位置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AccountMgr_Shown(object sender, EventArgs e)
+        {
+            int ListWidth = listView1.Width;//保存列表框的宽度
+            listView1.Columns[0].Width = (int)(ListWidth * 0.193595);//流水编号宽度
+            listView1.Columns[1].Width = (int)(ListWidth * 0.161572);//商品编号宽度
+            listView1.Columns[2].Width = (int)(ListWidth * 0.151382);//商品名称宽度
+            listView1.Columns[3].Width = (int)(ListWidth * 0.103347);//进货价宽度
+            listView1.Columns[4].Width = (int)(ListWidth * 0.101892);//销售单价宽度
+            listView1.Columns[5].Width = (int)(ListWidth * 0.087336);//数量宽度
+            listView1.Columns[6].Width = (int)(ListWidth * 0.087336);//单位宽度
+            listView1.Columns[7].Width = (int)(ListWidth * 0.107714);//利润宽度
+        }
     }
 }
