@@ -35,24 +35,22 @@ namespace Market
         /// <param name="_Password">数据库密码</param>
         public DataBaseManager(String _User,String _Password)
         {
-            DataBaseLogin(_User,_Password);//验证登录数据库
+            DataBaseLogin(_User, _Password);//验证登录数据库
         }
         /// <summary> 初始化数据库管理器，访问配置文件实现自动验证登录数据库
         /// </summary>
         public DataBaseManager()
         {
-            if (File.Exists(Environment.CurrentDirectory + "/Config.inf"))//根目录存在配置文件时
+            if (File.Exists(Environment.CurrentDirectory + "/Config.inf"))//根目录存在配置文件
             {
                 String[] Config_Lines = File.ReadAllLines(Environment.CurrentDirectory + "/Config.inf");//读取配置文件中所有行
-                if (Config_Lines.Length >= 3)//配置文件已记录数据库登录信息
+                if (Config_Lines.Length >= 2)//配置文件中至少了保存用户名与密码
                 {
-                    User = Config_Lines[1];//第二行为保存的数据库用户名
-                    Password = Config_Lines[2];//第三行为保存的数据库密码
-                    Success = true;//标记登录验证成功
-                }   
+                    DataBaseLogin(Config_Lines[0], Config_Lines[1]);//验证登录数据库
+                }
             }
         }
-        /// <summary> 数据库登录验证
+        /// <summary> 数据库登录验证，验证成功则设置类中的数据库信息
         /// </summary>
         /// <param name="_User">数据库账户名</param>
         /// <param name="_Password">数据库密码</param>
@@ -67,9 +65,11 @@ namespace Market
                 Password = _Password;//保存密码
                 Success = true;//标记数据库登录成功
             }
-            catch (Exception e)
-            {
-                MessageBox.Show(null, "无法连接到Oracle数据库，请检查Oracle数据库XE(x86)是否正常安装或用户名密码错误！", "数据库连接失败");//无法连接数据库则提示
+            catch (Exception)
+            {//验证失败
+                Success = false;
+                User = "";
+                Password = "";//清空保存的登录信息
             }
             finally
             {
@@ -358,7 +358,7 @@ namespace Market
         /// </summary>
         public void CreateConfigFile()
         {
-            String[] Config_Line = {"DBReady = True",User,Password};//配置行
+            String[] Config_Line = {User,Password};//配置行
             File.WriteAllLines(Environment.CurrentDirectory + "/Config.inf",Config_Line,Encoding.UTF8);//向配置文件写入配置行
         }
         /// <summary> 删除配置文件
@@ -1068,6 +1068,41 @@ namespace Market
             catch (Exception)
             {
                 return null;//失败则返回null
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
+        /// <summary> 检测数据库是否已成功初始化
+        /// </summary>
+        /// <returns></returns>
+        public Boolean CheckDBReady()
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                //若有表名包含marketterminal则代表已成功初始化
+                OracleCommand Chktbl = new OracleCommand(@"select count(*)
+                                                            from tabs
+                                                            where table_name like 'MARKETTERMINAL_%'");//查询表语句
+                Chktbl.Connection = Connect;//指定连接
+                OracleDataReader Reader = Chktbl.ExecuteReader();//执行查询
+                Reader.Read();//读取count
+                if (int.Parse(Reader[0].ToString()) > 0)
+                {
+                    return true;//有相关表，初始化成功
+                }
+                else
+                {
+                    return false;//无相关表，初始化失败
+                }
+            }
+            catch (Exception)
+            {
+                return false;//查询失败
             }
             finally
             {
