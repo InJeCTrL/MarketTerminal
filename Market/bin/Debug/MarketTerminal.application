@@ -7,14 +7,14 @@
     <framework targetVersion="4.5" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="MarketTerminal.exe.manifest" size="10647">
+    <dependentAssembly dependencyType="install" codebase="MarketTerminal.exe.manifest" size="11035">
       <assemblyIdentity name="MarketTerminal.exe" version="1.0.0.6" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>F0uunObdVaZDlaQD1i8R1COpz7SQaWbY6k7EJ2nv+Os=</dsig:DigestValue>
+        <dsig:DigestValue>LTmt1XwBf3yGwgvzLubliLT5x89DzIcWIfHDps7BcK0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

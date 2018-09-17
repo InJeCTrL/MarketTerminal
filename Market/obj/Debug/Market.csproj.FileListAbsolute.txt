@@ -8,7 +8,6 @@ D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Controls.xml
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Imaging.xml
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Video.xml
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\AForge.Math.xml
-D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.csprojResolveAssemblyReference.cache
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.Form1.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.Properties.Resources.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.csproj.GenerateResource.Cache
@@ -45,3 +44,4 @@ D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\MarketTerminal.exe.manifest
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Debug\MarketTerminal.application
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\MarketTerminal.exe.manifest
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\MarketTerminal.application
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.csprojResolveAssemblyReference.cache
