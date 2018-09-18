@@ -7,6 +7,8 @@ using System.Drawing;
 using System.Net;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using ZBar;
 
 namespace Market
 {
@@ -20,15 +22,19 @@ namespace Market
         /// <summary> 用于获取输入的视频设备
         /// </summary>
         private VideoCaptureDevice VideoSource;
-        /// <summary> 读取条码
+        /// <summary> ZXing读取条码
         /// </summary>
         private BarcodeReader CodeReader;
+        /// <summary> ZBar读取条码
+        /// </summary>
+        private ImageScanner CodeReader_2;
         /// <summary> 初始化商品扫描，初始化条码扫描类
         /// </summary>
         public CheckGoods()
         {
-            CodeReader = new BarcodeReader();//初始化条码扫描类
+            CodeReader = new BarcodeReader();//初始化ZXing条码扫描类
             CodeReader.Options.CharacterSet = "UTF-8";//设置条码字符集类型为UTF-8
+            CodeReader_2 = new ImageScanner();//初始化ZBar条码扫描类
         }
         /// <summary> 检查视频输入设备是否正常
         /// </summary>
@@ -56,10 +62,20 @@ namespace Market
         /// <returns>返回 String：条码值 null：图片中不存在条码</returns>
         public String CheckBarCode(Bitmap ScreenShot)
         {
-            Result barcode = CodeReader.Decode(ScreenShot);//使用BarCodeReader解码
-            if (barcode == null)
-                return null;//若条码为空则返回空
-            return barcode.Text;//返回条码对应字符串
+            Result barcode_ZXing = CodeReader.Decode(ScreenShot);//使用ZXing解码
+            if (barcode_ZXing == null)
+            {//若ZXing没有识别出条码
+                List<Symbol> barcode_ZBar = CodeReader_2.Scan(ScreenShot);//使用ZBar解码
+                if (barcode_ZBar == null || barcode_ZBar.Count == 0)
+                {
+                    return null;//若条码为空则返回空
+                }
+                else
+                {
+                    return barcode_ZBar[0].Data;//返回ZBar识别出的结果
+                }
+            }
+            return barcode_ZXing.Text;//返回条码对应字符串
         }
         /// <summary> 启动摄像头
         /// </summary>

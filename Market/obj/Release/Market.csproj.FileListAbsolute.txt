@@ -1,4 +1,6 @@
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\MarketTerminal.exe.config
+D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\MarketTerminal.exe.manifest
+D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\MarketTerminal.application
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\MarketTerminal.exe
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\MarketTerminal.pdb
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\AForge.Controls.dll
@@ -20,6 +22,7 @@ D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\AForge.Video.FFMPEG.xml
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\zxing.pdb
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\zxing.xml
 D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\AForge.Math.xml
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\Market.csprojResolveAssemblyReference.cache
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\Market.AccountMgr.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\Market.AccountModify.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\Market.BadLogView.resources
@@ -38,10 +41,7 @@ D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\Market.StaffMgr.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\Market.StaffModify.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\Market.TrunkMgr.resources
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\Market.csproj.GenerateResource.Cache
-D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\MarketTerminal.exe
-D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\MarketTerminal.pdb
-D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\MarketTerminal.exe.manifest
-D:\Code Trunk\CSharp\Market\Market\Market\bin\Release\MarketTerminal.application
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\MarketTerminal.exe.manifest
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\MarketTerminal.application
-D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\Market.csprojResolveAssemblyReference.cache
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\MarketTerminal.exe
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Release\MarketTerminal.pdb
