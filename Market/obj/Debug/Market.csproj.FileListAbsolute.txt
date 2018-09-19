@@ -44,3 +44,4 @@ D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\MarketTerminal.exe.manifest
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\MarketTerminal.application
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\MarketTerminal.exe
 D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\MarketTerminal.pdb
+D:\Code Trunk\CSharp\Market\Market\Market\obj\Debug\Market.csprojResolveAssemblyReference.cache
