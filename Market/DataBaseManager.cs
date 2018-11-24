@@ -4,6 +4,8 @@ using System.Text;
 using System.Data.OracleClient;
 using System.Windows.Forms;
 using System.IO;
+using System.Data;
+using System.Collections;
 
 namespace Market
 {
@@ -210,6 +212,50 @@ namespace Market
                 Connect.Close();//最后必须关闭数据库连接
             }
         }
+        /// <summary> 创建引用游标与各个存储过程
+        /// </summary>
+        /// <returns></returns>
+        private Boolean CreateCurandProc()
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand NewCur = new OracleCommand(@"create or replace package
+                                                            PK_RefCur as
+                                                            type p_cursor is ref cursor;
+                                                            end PK_RefCur;");//创建引用游标语句
+                NewCur.Connection = Connect;//指定连接
+                NewCur.ExecuteNonQuery();//执行创建
+                OracleCommand NewQGoodsList = new OracleCommand(@"create or replace procedure proc_GetGoodsList
+                                                            (p_cur out PK_RefCur.p_cursor)
+                                                            is
+                                                            begin
+	                                                            open p_cur for select * from MarketTerminal_Goods;
+                                                            end;");//创建获取商品列表存储过程语句
+                NewQGoodsList.Connection = Connect;//指定连接
+                NewQGoodsList.ExecuteNonQuery();//执行创建
+                OracleCommand NewQStaffList = new OracleCommand(@"create or replace procedure proc_GetStaffList
+                                                            (p_cur out PK_RefCur.p_cursor)
+                                                            is
+                                                            begin
+	                                                            open p_cur for select * from MarketTerminal_Staff;
+                                                            end;");//创建获取商品列表存储过程语句
+                NewQStaffList.Connection = Connect;//指定连接
+                NewQStaffList.ExecuteNonQuery();//执行创建
+
+                return true;//创建成功
+            }
+            catch (Exception)
+            {
+                return false;//创建失败则返回false
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
         /// <summary> 删除员工表
         /// </summary>
         /// <returns>返回 true：成功 false：失败</returns>
@@ -306,6 +352,36 @@ namespace Market
                 Connect.Close();//最后必须关闭数据库连接
             }
         }
+        /// <summary> 删除游标与存储过程
+        /// </summary>
+        /// <returns></returns>
+        private Boolean DeleteCurandProc()
+        {
+            String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
+            OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
+            try
+            {
+                Connect.Open();//尝试连接数据库
+                OracleCommand DelRC = new OracleCommand(@"drop package PK_RefCur");//删除引用游标
+                DelRC.Connection = Connect;//指定连接
+                DelRC.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_GSL = new OracleCommand(@"drop procedure proc_GetStaffList");//删除获取员工列表的存储过程
+                DelProc_GSL.Connection = Connect;//指定连接
+                DelProc_GSL.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_GGL = new OracleCommand(@"drop procedure proc_GetGoodsList");//删除获取商品列表的存储过程
+                DelProc_GGL.Connection = Connect;//指定连接
+                DelProc_GGL.ExecuteNonQuery();//执行删除
+                return true;//删除成功
+            }
+            catch (Exception)
+            {
+                return false;//失败则返回false
+            }
+            finally
+            {
+                Connect.Close();//最后必须关闭数据库连接
+            }
+        }
         /// <summary> 初始化数据库，包括数据库创建、表结构创建
         /// </summary>
         /// <returns>返回 true：初始化成功 false：初始化失败</returns>
@@ -318,14 +394,19 @@ namespace Market
                     if (CreateAccountTbl() == true)//创建账目表成功
                     {
                         if (CreateTrigger() == true)//创建触发器成功
-                            return true;
-                        else
-                        {//回滚账目表、商品表、员工表
-                            DeleteAccountTbl();//删除账目表
-                            DeleteStaffTbl();//删除员工表
-                            DeleteGoodsTbl();//删除商品表
-                            return false;
+                        {
+                            if (CreateCurandProc() == true)
+                                return true;
+                            else
+                            {//回滚账目表、商品表、员工表
+                                DeleteAccountTbl();//删除账目表
+                                DeleteStaffTbl();//删除员工表
+                                DeleteGoodsTbl();//删除商品表
+                                return false;
+                            }
                         }
+                        else
+                            return false;
                     }
                     else
                     {//回滚商品表、员工表
@@ -352,6 +433,7 @@ namespace Market
             DeleteTrigger();//删除触发器
             DeleteGoodsTbl();//删除商品表
             DeleteAccountTbl();//删除账目表
+            DeleteCurandProc();//删除引用游标与存储过程
             return true;
         }
         /// <summary> 创建配置文件，存放连接参数
@@ -378,15 +460,28 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand QueryStaffList = new OracleCommand(@"select * from MarketTerminal_Staff");//查询语句
-                QueryStaffList.Connection = Connect;//指定连接
-                OracleDataReader StaffListReader = QueryStaffList.ExecuteReader();//执行建表
-                while (StaffListReader.Read())//按行读取，直到结尾
+
+                OracleParameter[] Parm = new OracleParameter[1];//实例化参数列表
+                Parm[0] = new OracleParameter("p_cur",OracleType.Cursor);
+                Parm[0].Direction = ParameterDirection.Output;//定义引用游标输出参数
+
+                OracleCommand QueryStaffList = new OracleCommand("proc_GetStaffList",Connect);//指定存储过程
+                QueryStaffList.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                QueryStaffList.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    QueryStaffList.Parameters.Add(tP);
+                }
+                OracleDataAdapter OA = new OracleDataAdapter(QueryStaffList);
+                DataTable datatable = new DataTable();
+                OA.Fill(datatable);//调用存储过程并拉取数据
+                int i = datatable.Rows.Count;//循环行数次
+                while ((i--) != 0)//按行读取，直到结尾
                 {
-                    StaffList.Add(new String[] {StaffListReader[0].ToString(),//员工号
-                                                StaffListReader[1].ToString(),//姓名
-                                                StaffListReader[2].ToString() == "1"?"是":"否",//是否超级管理员
-                                                StaffListReader[3].ToString()});//密码
+                    StaffList.Add(new String[] {datatable.Rows[i][0].ToString(),//员工号
+                                                datatable.Rows[i][1].ToString(),//姓名
+                                                datatable.Rows[i][2].ToString() == "1"?"是":"否",//是否超级管理员
+                                                datatable.Rows[i][3].ToString()});//密码
                 }
                 return StaffList;//查询成功
             }
