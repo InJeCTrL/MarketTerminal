@@ -150,14 +150,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MarketTerminal.exe" size="103424">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MarketTerminal.exe" size="137216">
       <assemblyIdentity name="MarketTerminal" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>4PB+Lz9SISKl5meSolsW6HfL0Cru4Zjg03EQBJo5ZvU=</dsig:DigestValue>
+        <dsig:DigestValue>5IDGqp14ame3cZ0THKuIlHN8rBilWlQlXXdeteXYigw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

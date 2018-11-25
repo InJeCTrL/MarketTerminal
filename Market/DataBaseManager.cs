@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Data.OracleClient;
-using System.Windows.Forms;
 using System.IO;
 using System.Data;
-using System.Collections;
 
 namespace Market
 {
@@ -225,7 +223,7 @@ namespace Market
                 OracleCommand NewCur = new OracleCommand(@"create or replace package
                                                             PK_RefCur as
                                                             type p_cursor is ref cursor;
-                                                            end PK_RefCur;");//创建引用游标语句
+                                                            end PK_RefCur;");//创建引用游标
                 NewCur.Connection = Connect;//指定连接
                 NewCur.ExecuteNonQuery();//执行创建
                 OracleCommand NewQGoodsList = new OracleCommand(@"create or replace procedure proc_GetGoodsList
@@ -233,7 +231,7 @@ namespace Market
                                                             is
                                                             begin
 	                                                            open p_cur for select * from MarketTerminal_Goods;
-                                                            end;");//创建获取商品列表存储过程语句
+                                                            end;");//创建获取商品列表存储过程
                 NewQGoodsList.Connection = Connect;//指定连接
                 NewQGoodsList.ExecuteNonQuery();//执行创建
                 OracleCommand NewQStaffList = new OracleCommand(@"create or replace procedure proc_GetStaffList
@@ -241,9 +239,256 @@ namespace Market
                                                             is
                                                             begin
 	                                                            open p_cur for select * from MarketTerminal_Staff;
-                                                            end;");//创建获取商品列表存储过程语句
+                                                            end;");//创建获取员工列表存储过程
                 NewQStaffList.Connection = Connect;//指定连接
                 NewQStaffList.ExecuteNonQuery();//执行创建
+                OracleCommand NewChkUsr = new OracleCommand(@"create or replace procedure CheckStaff
+                                                            (v_USER in varchar,
+                                                            v_PWD in varchar,
+                                                            v_Ret out integer)
+                                                            is
+                                                            begin
+	                                                            select count(*) into v_Ret
+	                                                            from MarketTerminal_Staff
+	                                                            where StaffNo=v_USER and Password=v_PWD;
+                                                            end;");//创建员工登录存储过程
+                NewChkUsr.Connection = Connect;//指定连接
+                NewChkUsr.ExecuteNonQuery();//执行创建
+                OracleCommand NewChkSU = new OracleCommand(@"create or replace procedure CheckSU
+                                                            (v_USER in varchar,
+                                                            v_Ret out integer)
+                                                            is
+                                                            begin
+	                                                            select SuperUser into v_Ret
+	                                                            from MarketTerminal_Staff
+	                                                            where StaffNo=v_USER;
+                                                            end;");//创建检查用户类型存储过程
+                NewChkSU.Connection = Connect;//指定连接
+                NewChkSU.ExecuteNonQuery();//执行创建
+                OracleCommand UPUserName = new OracleCommand(@"create or replace procedure UPUserName
+                                                            (v_USERid in varchar,
+                                                            v_newUSER in varchar)
+                                                            is
+                                                            begin
+	                                                            update MarketTerminal_Staff
+	                                                            set StaffName=v_newUSER
+	                                                            where StaffNo=v_USERid;
+                                                            end;");//创建更新用户名存储过程
+                UPUserName.Connection = Connect;//指定连接
+                UPUserName.ExecuteNonQuery();//执行创建
+                OracleCommand UPUserPWD = new OracleCommand(@"create or replace procedure UPUserPwd
+                                                            (v_USERid in varchar,
+                                                            v_newPWD in varchar)
+                                                            is
+                                                            begin
+	                                                            update MarketTerminal_Staff
+	                                                            set PASSWORD=v_newPWD
+	                                                            where StaffNo=v_USERid;
+                                                            end;");//创建更新用户密码存储过程
+                UPUserPWD.Connection = Connect;//指定连接
+                UPUserPWD.ExecuteNonQuery();//执行创建
+                OracleCommand UPSUsta = new OracleCommand(@"create or replace procedure SetSUsta
+                                                        (v_USERid in varchar,
+                                                        v_SUstatus in integer)
+                                                        is
+                                                        begin
+	                                                        update MarketTerminal_Staff
+	                                                        set SuperUser=v_SUstatus
+	                                                        where StaffNo=v_USERid;
+                                                        end;");//创建更新SU状态存储过程
+                UPSUsta.Connection = Connect;//指定连接
+                UPSUsta.ExecuteNonQuery();//执行创建
+                OracleCommand DeleteUser = new OracleCommand(@"create or replace procedure DeleteUser
+                                                                (v_USERid in varchar)
+                                                                is
+                                                                begin
+	                                                                delete from MarketTerminal_Staff
+	                                                                where StaffNo=v_USERid;
+                                                                end;");//创建删除员工存储过程
+                DeleteUser.Connection = Connect;//指定连接
+                DeleteUser.ExecuteNonQuery();//执行创建
+                OracleCommand GetUser = new OracleCommand(@"create or replace procedure GetStaff
+                                                            (v_USERid in varchar,
+                                                            p_cur out PK_RefCur.p_cursor)
+                                                            is
+                                                            begin
+	                                                            open p_cur for select * from MarketTerminal_Staff where StaffNo=v_USERid;
+                                                            end;");//创建获取员工信息存储过程
+                GetUser.Connection = Connect;//指定连接
+                GetUser.ExecuteNonQuery();//执行创建
+                OracleCommand NewUser = new OracleCommand(@"create or replace procedure NewStaff
+                                                            (v_USERid in varchar,
+                                                            v_UserName in varchar,
+                                                            v_SU in integer,
+                                                            v_UserPWD in varchar)
+                                                            is
+                                                            begin
+	                                                            insert into MarketTerminal_Staff
+	                                                            values(v_USERid,v_UserName,v_SU,v_UserPWD);
+                                                            end;");//创建新建员工存储过程
+                NewUser.Connection = Connect;//指定连接
+                NewUser.ExecuteNonQuery();//执行创建
+                OracleCommand DeleteGoods = new OracleCommand(@"create or replace procedure DeleteGoods
+                                                                (v_Goodsid in varchar)
+                                                                is
+                                                                begin
+	                                                                delete from MarketTerminal_Goods
+	                                                                where GoodsNo=v_Goodsid;
+                                                                end;");//创建删除商品存储过程
+                DeleteGoods.Connection = Connect;//指定连接
+                DeleteGoods.ExecuteNonQuery();//执行创建
+                OracleCommand NewChkGoods = new OracleCommand(@"create or replace procedure CheckGoods
+                                                                (v_Goodsid in varchar,
+                                                                v_Ret out integer)
+                                                                is
+                                                                begin
+                                                                    select count(*) into v_Ret
+                                                                    from MarketTerminal_Goods
+                                                                    where GoodsNo=v_Goodsid;
+                                                                end;");//创建检查商品存储过程
+                NewChkGoods.Connection = Connect;//指定连接
+                NewChkGoods.ExecuteNonQuery();//执行创建
+                OracleCommand UpGoodsNum = new OracleCommand(@"create or replace procedure UpGoodsNum
+                                                                (v_Goodsid in varchar,
+                                                                v_Num in integer)
+                                                                is
+                                                                begin
+                                                                    update MarketTerminal_Goods
+                                                                     set TrunkLeft = TrunkLeft + v_Num
+                                                                     where GoodsNo = v_Goodsid;
+                                                                end;");//创建更新商品数目存储过程
+                UpGoodsNum.Connection = Connect;//指定连接
+                UpGoodsNum.ExecuteNonQuery();//执行创建
+                OracleCommand UpGoodsNowNum = new OracleCommand(@"create or replace procedure UpGoodsNowNum
+                                                                (v_Goodsid in varchar,
+                                                                v_Num in integer)
+                                                                is
+                                                                begin
+                                                                    update MarketTerminal_Goods
+                                                                     set MARKETLEFT = MARKETLEFT + v_Num
+                                                                     where GoodsNo = v_Goodsid;
+                                                                end;");//创建更新商品货架数目存储过程
+                UpGoodsNowNum.Connection = Connect;//指定连接
+                UpGoodsNowNum.ExecuteNonQuery();//执行创建
+                OracleCommand NewGoods = new OracleCommand(@"create or replace procedure NewGoods
+                                                            (v_Goodsid in varchar,
+                                                            v_GOODSNAME in varchar,
+                                                            v_IN_PRICE in number,
+                                                            v_OUT_PRICE in number,
+                                                            v_MARKETLEFT in int,
+                                                            v_TRUNKLEFT in int,
+                                                            v_BRAND in varchar,
+                                                            v_UNIT in varchar)
+                                                            is
+                                                            begin
+                                                                insert into MarketTerminal_Goods
+                                                                values (v_Goodsid,v_GOODSNAME,v_IN_PRICE,v_OUT_PRICE,v_MARKETLEFT,v_TRUNKLEFT,v_BRAND,v_UNIT);
+                                                            end;");//创建更新创建商品存储过程
+                NewGoods.Connection = Connect;//指定连接
+                NewGoods.ExecuteNonQuery();//执行创建
+                OracleCommand GetGoods = new OracleCommand(@"create or replace procedure GetGoods
+                                                            (v_Goodsid in varchar,
+                                                            p_cur out PK_RefCur.p_cursor)
+                                                            is
+                                                            begin
+                                                                open p_cur for select * from MarketTerminal_Goods
+                                                                where GoodsNo=v_Goodsid;
+                                                            end;");//创建获取商品信息存储过程
+                GetGoods.Connection = Connect;//指定连接
+                GetGoods.ExecuteNonQuery();//执行创建
+                OracleCommand UPGoods = new OracleCommand(@"create or replace procedure UPGoods
+                                                            (v_Goodsid in varchar,
+                                                            v_GOODSNAME in varchar,
+                                                            v_IN_PRICE in number,
+                                                            v_OUT_PRICE in number,
+                                                            v_MARKETLEFT in int,
+                                                            v_TRUNKLEFT in int,
+                                                            v_BRAND in varchar,
+                                                            v_UNIT in varchar)
+                                                            is
+                                                            begin
+                                                                update MarketTerminal_Goods
+                                                                    set GOODSNAME=v_GOODSNAME,
+                                                                        IN_PRICE=v_IN_PRICE,
+                                                                        OUT_PRICE=v_OUT_PRICE,
+                                                                        MARKETLEFT=v_MARKETLEFT,
+                                                                        TRUNKLEFT=v_TRUNKLEFT,
+                                                                        BRAND=v_BRAND,
+                                                                        UNIT=v_UNIT
+                                                                        where GOODSNO=v_Goodsid;
+                                                            end;");//创建更新商品信息存储过程
+                UPGoods.Connection = Connect;//指定连接
+                UPGoods.ExecuteNonQuery();//执行创建
+                OracleCommand NewQAccfList = new OracleCommand(@"create or replace procedure proc_GetAccountList
+                                                            (p_cur out PK_RefCur.p_cursor)
+                                                            is
+                                                            begin
+	                                                            open p_cur for select * from MarketTerminal_Account;
+                                                            end;");//创建获取账目列表存储过程
+                NewQAccfList.Connection = Connect;//指定连接
+                NewQAccfList.ExecuteNonQuery();//执行创建
+                OracleCommand UpAccount = new OracleCommand(@"create or replace procedure UpAccount   
+                                                            (v_AccId in varchar,
+                                                            v_Goodsid in varchar,
+                                                            v_GOODSNAME in varchar,
+                                                            v_IN_PRICE in number,
+                                                            v_OUT_PRICE in number,
+                                                            v_OUTNUM in int,
+                                                            v_UNIT in varchar,
+                                                            v_Price in number)
+                                                            is
+                                                            begin
+	                                                            update MarketTerminal_Account
+                                                                 set GOODSNO=v_Goodsid,
+                                                                     GOODSNAME=v_GOODSNAME,
+                                                                     IN_PRICE=v_IN_PRICE,
+                                                                     OUT_PRICE=v_OUT_PRICE,
+                                                                     OUTNUM=v_OUTNUM,
+                                                                     UNIT=v_UNIT,
+                                                                     PRICE=v_Price
+                                                                     where ACCOUNTNO=v_AccId;
+                                                            end;");//创建更新账目存储过程
+                UpAccount.Connection = Connect;//指定连接
+                UpAccount.ExecuteNonQuery();//执行创建
+                OracleCommand DeleteAccount = new OracleCommand(@"create or replace procedure DeleteAccount
+                                                                (v_Acc in varchar)
+                                                                is
+                                                                begin
+	                                                                delete from MarketTerminal_Account
+	                                                                where ACCOUNTNO=v_Acc;
+                                                                end;");//创建删除商品存储过程
+                DeleteAccount.Connection = Connect;//指定连接
+                DeleteAccount.ExecuteNonQuery();//执行创建
+                OracleCommand NewQGoodsfList_Part = new OracleCommand(@"create or replace procedure proc_GetGoodsList_P
+                                                            (v_Goodsid in varchar,
+                                                                p_cur out PK_RefCur.p_cursor)
+                                                            is
+                                                            begin
+	                                                            open p_cur for select * from MarketTerminal_Goods
+                                                              where GoodsNo like '%'+v_Goodsid+'%';
+                                                            end;");//创建获取模糊查找商品列表存储过程
+                NewQGoodsfList_Part.Connection = Connect;//指定连接
+                NewQGoodsfList_Part.ExecuteNonQuery();//执行创建
+                OracleCommand GetNowFew = new OracleCommand(@"create or replace procedure proc_GetGoodsList_NF
+                                                            (v_Thresh in integer,
+                                                                p_cur out PK_RefCur.p_cursor)
+                                                            is
+                                                            begin
+	                                                            open p_cur for select * from MarketTerminal_Goods
+                                                              where Marketleft < v_Thresh;
+                                                            end;");//创建获取货架余量不足的商品列表存储过程
+                GetNowFew.Connection = Connect;//指定连接
+                GetNowFew.ExecuteNonQuery();//执行创建
+                OracleCommand GetTrunkFew = new OracleCommand(@"create or replace procedure proc_GetGoodsList_TF
+                                                            (v_Thresh in integer,
+                                                                p_cur out PK_RefCur.p_cursor)
+                                                            is
+                                                            begin
+	                                                            open p_cur for select * from MarketTerminal_Goods
+                                                              where TrunkLeft < v_Thresh;
+                                                            end;");//创建获取总量不足的商品列表存储过程
+                GetTrunkFew.Connection = Connect;//指定连接
+                GetTrunkFew.ExecuteNonQuery();//执行创建
 
                 return true;//创建成功
             }
@@ -371,6 +616,69 @@ namespace Market
                 OracleCommand DelProc_GGL = new OracleCommand(@"drop procedure proc_GetGoodsList");//删除获取商品列表的存储过程
                 DelProc_GGL.Connection = Connect;//指定连接
                 DelProc_GGL.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_CSf = new OracleCommand(@"drop procedure CheckStaff");//删除员工登录的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_CSU = new OracleCommand(@"drop procedure CheckSU");//删除检查用户类型的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_UPUserName = new OracleCommand(@"drop procedure UPUserName");//删除更新用户名的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_UPUserPwd = new OracleCommand(@"drop procedure UPUserPwd");//删除更新用户密码的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_SetSUsta = new OracleCommand(@"drop procedure SetSUsta");//删除更新SU状态的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_DeleteUser = new OracleCommand(@"drop procedure DeleteUser");//删除删除员工的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_GetStaff = new OracleCommand(@"drop procedure GetStaff");//删除获取员工信息的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_NewStaff = new OracleCommand(@"drop procedure NewStaff");//删除新建员工的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_DeleteGoods = new OracleCommand(@"drop procedure DeleteGoods");//删除删除商品的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_CheckGoods = new OracleCommand(@"drop procedure CheckGoods");//删除检查商品的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_UpGoodsNum = new OracleCommand(@"drop procedure UpGoodsNum");//删除商品数目的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_UpGoodsNowNum = new OracleCommand(@"drop procedure UpGoodsNowNum");//删除获取货架商品数量的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_NewGoods = new OracleCommand(@"drop procedure NewGoods");//删除创建商品的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_GetGoods = new OracleCommand(@"drop procedure GetGoods");//删除获取商品信息的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_UPGoods = new OracleCommand(@"drop procedure UPGoods");//删除更新商品的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_proc_GetAccountList = new OracleCommand(@"drop procedure proc_GetAccountList");//删除获取账目列表的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_UpAccount = new OracleCommand(@"drop procedure UpAccount");//删除更新账目的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_DeleteAccount = new OracleCommand(@"drop procedure DeleteAccount");//删除删除账目的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_proc_GetGoodsList_P = new OracleCommand(@"drop procedure proc_GetGoodsList_P");//删除获取匹配商品列表的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_proc_GetGoodsList_NF = new OracleCommand(@"drop procedure proc_GetGoodsList_NF");//删除获取货架存量不足的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
+                OracleCommand DelProc_proc_GetGoodsList_TF = new OracleCommand(@"drop procedure proc_GetGoodsList_TF");//删除获取总量不足的存储过程
+                DelProc_CSf.Connection = Connect;//指定连接
+                DelProc_CSf.ExecuteNonQuery();//执行删除
                 return true;//删除成功
             }
             catch (Exception)
@@ -505,19 +813,32 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand QueryGoodsList = new OracleCommand(@"select * from MarketTerminal_Goods");//查询语句
-                QueryGoodsList.Connection = Connect;//指定连接
-                OracleDataReader GoodsListReader = QueryGoodsList.ExecuteReader();//执行查询
-                while (GoodsListReader.Read())//按行读取，直到结尾
+
+                OracleParameter[] Parm = new OracleParameter[1];//实例化参数列表
+                Parm[0] = new OracleParameter("p_cur", OracleType.Cursor);
+                Parm[0].Direction = ParameterDirection.Output;//定义引用游标输出参数
+
+                OracleCommand QueryGoodsList = new OracleCommand("proc_GetGoodsList", Connect);//指定存储过程
+                QueryGoodsList.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                QueryGoodsList.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    QueryGoodsList.Parameters.Add(tP);
+                }
+                OracleDataAdapter OA = new OracleDataAdapter(QueryGoodsList);
+                DataTable datatable = new DataTable();
+                OA.Fill(datatable);//调用存储过程并拉取数据
+                int i = datatable.Rows.Count;//循环行数次
+                while ((i--) != 0)//按行读取，直到结尾
                 {
-                    GoodsList.Add(new String[] {GoodsListReader[0].ToString(),//商品编号
-                                                GoodsListReader[1].ToString(),//商品名
-                                                GoodsListReader[2].ToString(),//进价
-                                                GoodsListReader[3].ToString(),//售价
-                                                GoodsListReader[4].ToString(),//货架剩余
-                                                GoodsListReader[5].ToString(),//仓库剩余
-                                                GoodsListReader[6].ToString(),//品牌
-                                                GoodsListReader[7].ToString()});//单位
+                    GoodsList.Add(new String[] {datatable.Rows[i][0].ToString(),//商品编号
+                                                datatable.Rows[i][1].ToString(),//商品名
+                                                datatable.Rows[i][2].ToString(),//进价
+                                                datatable.Rows[i][3].ToString(),//售价
+                                                datatable.Rows[i][4].ToString(),//货架剩余
+                                                datatable.Rows[i][5].ToString(),//仓库剩余
+                                                datatable.Rows[i][6].ToString(),//品牌
+                                                datatable.Rows[i][7].ToString()});//单位
                 }
                 return GoodsList;//查询成功
             }
@@ -542,14 +863,29 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand CheckUser = new OracleCommand(@"select * from MarketTerminal_Staff
-                                                              where StaffNo='" + _User + @"'and Password='" + _Password + @"'");//查询语句
-                CheckUser.Connection = Connect;//指定连接
-                OracleDataReader Reader = CheckUser.ExecuteReader();//执行查询
-                if (Reader.Read())//查询到结果
-                    return true;//验证成功
-                else
+
+                OracleParameter[] Parm = new OracleParameter[3];//实例化参数列表
+                Parm[0] = new OracleParameter("v_USER", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：用户名
+                Parm[0].Value = _User;
+                Parm[1] = new OracleParameter("v_PWD", OracleType.VarChar);
+                Parm[1].Direction = ParameterDirection.Input;//输入参数：密码
+                Parm[1].Value = _Password;
+                Parm[2] = new OracleParameter("v_Ret", OracleType.Int16);
+                Parm[2].Direction = ParameterDirection.Output;//输出参数：结果1/0
+
+                OracleCommand Chk = new OracleCommand("CheckStaff", Connect);//指定存储过程
+                Chk.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                Chk.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    Chk.Parameters.Add(tP);
+                }
+                Chk.ExecuteNonQuery();//调用存储过程
+                if (Parm[2].Value.ToString() == "0")
                     return false;//验证失败
+                else
+                    return true;//验证成功
             }
             catch (Exception)
             {
@@ -571,18 +907,30 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand CheckSU = new OracleCommand(@"select * from MarketTerminal_Staff
-                                                              where StaffNo='" + _User + @"'and SuperUser='1'");//查询语句
-                CheckSU.Connection = Connect;//指定连接
-                OracleDataReader Reader = CheckSU.ExecuteReader();//执行查询
-                if (Reader.Read())//查询到结果
-                    return true;//验证成功
+
+                OracleParameter[] Parm = new OracleParameter[2];//实例化参数列表
+                Parm[0] = new OracleParameter("v_USER", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：用户名
+                Parm[0].Value = _User;
+                Parm[1] = new OracleParameter("v_Ret", OracleType.Int16);
+                Parm[1].Direction = ParameterDirection.Output;//输出参数：结果1/0
+
+                OracleCommand Chk = new OracleCommand("CheckSU", Connect);//指定存储过程
+                Chk.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                Chk.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    Chk.Parameters.Add(tP);
+                }
+                Chk.ExecuteNonQuery();//调用存储过程
+                if (Parm[1].Value.ToString() == "0")
+                    return false;//验证普通用户
                 else
-                    return false;//验证失败
+                    return true;//验证超级管理员
             }
             catch (Exception)
             {
-                return false;//超级管理员则返回false
+                return false;//查询失败返回false
             }
             finally
             {
@@ -602,12 +950,26 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand ChangeStaffName = new OracleCommand(@"update MarketTerminal_Staff
-                                                                    set STAFFNAME = '" + _NewName + @"'
-                                                                    where STAFFNO = '" + _StaffNo + @"'");//姓名更新语句
-                ChangeStaffName.Connection = Connect;//指定连接
-                ChangeStaffName.ExecuteNonQuery();//执行更新
-                return true;//更新成功
+
+                OracleParameter[] Parm = new OracleParameter[2];//实例化参数列表
+                Parm[0] = new OracleParameter("v_USERid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：用户ID
+                Parm[0].Value = _StaffNo;
+                Parm[1] = new OracleParameter("v_newUSER", OracleType.VarChar);
+                Parm[1].Direction = ParameterDirection.Input;//输入参数：新用户名
+                Parm[1].Value = _NewName;
+
+                OracleCommand UP = new OracleCommand("UPUserName", Connect);//指定存储过程
+                UP.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                UP.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    UP.Parameters.Add(tP);
+                }
+                if (UP.ExecuteNonQuery() == 0)//调用存储过程
+                    return false;//更新失败
+                else
+                    return true;//更新成功
             }
             catch (Exception)
             {
@@ -631,12 +993,25 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand ChangeStaffPwd = new OracleCommand(@"update MarketTerminal_Staff
-                                                                    set STAFFNAME = '" + _NewPassword + @"'
-                                                                    where STAFFNO = '" + _StaffNo + @"'");//密码更新语句
-                ChangeStaffPwd.Connection = Connect;//指定连接
-                ChangeStaffPwd.ExecuteNonQuery();//执行更新
-                return true;//更新成功
+                OracleParameter[] Parm = new OracleParameter[2];//实例化参数列表
+                Parm[0] = new OracleParameter("v_USERid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：用户ID
+                Parm[0].Value = _StaffNo;
+                Parm[1] = new OracleParameter("v_newPWD", OracleType.VarChar);
+                Parm[1].Direction = ParameterDirection.Input;//输入参数：新密码
+                Parm[1].Value = _NewPassword;
+
+                OracleCommand UP = new OracleCommand("UPUserPwd", Connect);//指定存储过程
+                UP.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                UP.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    UP.Parameters.Add(tP);
+                }
+                if (UP.ExecuteNonQuery() == 0)//调用存储过程
+                    return false;//更新失败
+                else
+                    return true;//更新成功
             }
             catch (Exception)
             {
@@ -659,22 +1034,29 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand ChangeStaffSU;//用于存放更新SU状态语句
-                if (_SUstatus == true)//赋予超级管理员
-                {
-                    ChangeStaffSU = new OracleCommand(@"update MarketTerminal_Staff
-                                                         set SUPERUSER = '1'
-                                                         where STAFFNO = '" + _StaffNo + @"'");//SU更新语句
+
+                OracleParameter[] Parm = new OracleParameter[2];//实例化参数列表
+                Parm[0] = new OracleParameter("v_USERid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：用户ID
+                Parm[0].Value = _StaffNo;
+                Parm[1] = new OracleParameter("v_SUstatus", OracleType.Int16);
+                Parm[1].Direction = ParameterDirection.Input;//输入参数：新用户类型
+                if (_SUstatus == true)
+                    Parm[1].Value = 1;//赋予超级管理员
+                else
+                    Parm[1].Value = 0;//撤销超级管理员
+
+                OracleCommand UP = new OracleCommand("SetSUsta", Connect);//指定存储过程
+                UP.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                UP.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    UP.Parameters.Add(tP);
                 }
-                else//撤销超级管理员
-                {
-                    ChangeStaffSU = new OracleCommand(@"update MarketTerminal_Staff
-                                                         set SUPERUSER = '0'
-                                                         where STAFFNO = '" + _StaffNo + @"'");//SU更新语句
-                }
-                ChangeStaffSU.Connection = Connect;//指定连接
-                ChangeStaffSU.ExecuteNonQuery();//执行更新
-                return true;//更新成功
+                if (UP.ExecuteNonQuery() == 0)//调用存储过程
+                    return false;//更新失败
+                else
+                    return true;//更新成功
             }
             catch (Exception)
             {
@@ -696,12 +1078,22 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand DeleteStaff = new OracleCommand(@"delete 
-                                                                    from MARKETTERMINAL_STAFF
-                                                                    where STAFFNO='" + _StaffNo + @"'");//员工行删除语句
-                DeleteStaff.Connection = Connect;//指定连接
-                DeleteStaff.ExecuteNonQuery();//执行删除
-                return true;//删除成功
+                OracleParameter[] Parm = new OracleParameter[1];//实例化参数列表
+                Parm[0] = new OracleParameter("v_USERid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：用户ID
+                Parm[0].Value = _StaffNo;
+
+                OracleCommand UP = new OracleCommand("DeleteUser", Connect);//指定存储过程
+                UP.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                UP.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    UP.Parameters.Add(tP);
+                }
+                if (UP.ExecuteNonQuery() == 0)//调用存储过程
+                    return false;//删除失败
+                else
+                    return true;//删除成功
             }
             catch (Exception)
             {
@@ -723,12 +1115,26 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand GetUser = new OracleCommand(@"select * from MarketTerminal_Staff
-                                                              where StaffNo='" + _StaffNo + @"'");//查询语句
-                GetUser.Connection = Connect;//指定连接
-                OracleDataReader Reader = GetUser.ExecuteReader();//执行查询
-                if (Reader.Read())
-                    return new String[] { Reader[0].ToString(), Reader[1].ToString(), Reader[2].ToString(), Reader[3].ToString() };//返回信息集
+
+                OracleParameter[] Parm = new OracleParameter[2];//实例化参数列表
+                Parm[0] = new OracleParameter("v_USERid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;
+                Parm[0].Value = _StaffNo;//输入员工工号
+                Parm[1] = new OracleParameter("p_cur", OracleType.Cursor);
+                Parm[1].Direction = ParameterDirection.Output;//定义引用游标输出参数
+
+                OracleCommand QueryStaff = new OracleCommand("GetStaff", Connect);//指定存储过程
+                QueryStaff.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                QueryStaff.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    QueryStaff.Parameters.Add(tP);
+                }
+                OracleDataAdapter OA = new OracleDataAdapter(QueryStaff);
+                DataTable datatable = new DataTable();
+                OA.Fill(datatable);//调用存储过程并拉取数据
+                if (datatable.Rows.Count != 0)
+                    return new String[] { datatable.Rows[0][0].ToString(), datatable.Rows[0][1].ToString(), datatable.Rows[0][2].ToString(), datatable.Rows[0][3].ToString() };//查询成功
                 else
                     return null;//无此员工返回null
             }
@@ -750,20 +1156,38 @@ namespace Market
         {
             String Connect_Str = GetConnectStr(User, Password);//获取数据库连接参数字符串
             OracleConnection Connect = new OracleConnection(Connect_Str);//实例化连接oracle类
-            int SU_flag;//SU标志
             try
             {
-                if (_StaffInfo[2].Equals("是"))//有超级管理员
-                    SU_flag = 1;
-                else//无超级管理员
-                    SU_flag = 0;
                 Connect.Open();//尝试连接数据库
-                OracleCommand AddStaff = new OracleCommand(@"insert into MarketTerminal_Staff
-                                                             values ('" + _StaffInfo[0] + "','" + _StaffInfo[1] + "','" + SU_flag + "','" +
-                                                            _StaffInfo[3] + @"')");//用于存放新增员工语句
-                AddStaff.Connection = Connect;//指定连接
-                AddStaff.ExecuteNonQuery();//执行添加
-                return true;//添加成功
+
+                OracleParameter[] Parm = new OracleParameter[4];//实例化参数列表
+                Parm[0] = new OracleParameter("v_USERid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：用户ID
+                Parm[0].Value = _StaffInfo[0];
+                Parm[1] = new OracleParameter("v_UserName", OracleType.VarChar);
+                Parm[1].Direction = ParameterDirection.Input;//输入参数：用户名
+                Parm[1].Value = _StaffInfo[1];
+                Parm[2] = new OracleParameter("v_SU", OracleType.Int16);
+                Parm[2].Direction = ParameterDirection.Input;//输入参数：用户SU状态
+                if (_StaffInfo[2].Equals("是"))//有超级管理员
+                    Parm[2].Value = 1;
+                else//无超级管理员
+                    Parm[2].Value = 0;
+                Parm[3] = new OracleParameter("v_UserPWD", OracleType.VarChar);
+                Parm[3].Direction = ParameterDirection.Input;//输入参数：用户密码
+                Parm[3].Value = _StaffInfo[3];
+
+                OracleCommand UP = new OracleCommand("NewStaff", Connect);//指定存储过程
+                UP.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                UP.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    UP.Parameters.Add(tP);
+                }
+                if (UP.ExecuteNonQuery() == 0)//调用存储过程
+                    return false;//删除失败
+                else
+                    return true;//删除成功
             }
             catch (Exception)
             {
@@ -785,12 +1209,23 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand DeleteGoods = new OracleCommand(@"delete 
-                                                                    from MARKETTERMINAL_Goods
-                                                                    where GOODSNO='" + _GoodsNo + @"'");//商品行删除语句
-                DeleteGoods.Connection = Connect;//指定连接
-                DeleteGoods.ExecuteNonQuery();//执行删除
-                return true;//删除成功
+
+                OracleParameter[] Parm = new OracleParameter[1];//实例化参数列表
+                Parm[0] = new OracleParameter("v_Goodsid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：商品号
+                Parm[0].Value = _GoodsNo;
+
+                OracleCommand UP = new OracleCommand("DeleteGoods", Connect);//指定存储过程
+                UP.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                UP.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    UP.Parameters.Add(tP);
+                }
+                if (UP.ExecuteNonQuery() == 0)//调用存储过程
+                    return false;//删除失败
+                else
+                    return true;//删除成功
             }
             catch (Exception)
             {
@@ -812,14 +1247,26 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand CheckGoods = new OracleCommand(@"select * from MarketTerminal_Goods
-                                                              where GoodsNo='" + _GoodsNo + @"'");//查询语句
-                CheckGoods.Connection = Connect;//指定连接
-                OracleDataReader Reader = CheckGoods.ExecuteReader();//执行查询
-                if (Reader.Read())//查询到结果
-                    return true;//存在
+
+                OracleParameter[] Parm = new OracleParameter[2];//实例化参数列表
+                Parm[0] = new OracleParameter("v_Goodsid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：商品名
+                Parm[0].Value = _GoodsNo;
+                Parm[1] = new OracleParameter("v_Ret", OracleType.Int16);
+                Parm[1].Direction = ParameterDirection.Output;//输出参数：结果1/0
+
+                OracleCommand Chk = new OracleCommand("CheckGoods", Connect);//指定存储过程
+                Chk.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                Chk.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    Chk.Parameters.Add(tP);
+                }
+                Chk.ExecuteNonQuery();//调用存储过程
+                if (Parm[1].Value.ToString() == "0")
+                    return false;//无此类商品
                 else
-                    return false;//不存在
+                    return true;//有此类商品
             }
             catch (Exception)
             {
@@ -842,12 +1289,26 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand AddNum = new OracleCommand(@"update MarketTerminal_Goods
-                                                         set TrunkLeft = TrunkLeft + '" + Num + @"'
-                                                         where GoodsNo = '" + _GoodsNo + @"'");//用于存放增加数量语句
-                AddNum.Connection = Connect;//指定连接
-                AddNum.ExecuteNonQuery();//执行更新
-                return true;//更新成功
+
+                OracleParameter[] Parm = new OracleParameter[2];//实例化参数列表
+                Parm[0] = new OracleParameter("v_Goodsid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：商品号
+                Parm[0].Value = _GoodsNo;
+                Parm[1] = new OracleParameter("v_Num", OracleType.VarChar);
+                Parm[1].Direction = ParameterDirection.Input;//输入参数：新增数量
+                Parm[1].Value = Num;
+
+                OracleCommand UP = new OracleCommand("UpGoodsNum", Connect);//指定存储过程
+                UP.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                UP.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    UP.Parameters.Add(tP);
+                }
+                if (UP.ExecuteNonQuery() == 0)//调用存储过程
+                    return false;//更新失败
+                else
+                    return true;//更新成功
             }
             catch (Exception)
             {
@@ -870,12 +1331,26 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand AddNum = new OracleCommand(@"update MarketTerminal_Goods
-                                                         set MARKETLEFT = MARKETLEFT + '" + Num + @"'
-                                                         where GoodsNo = '" + _GoodsNo + @"'");//用于存放增加数量语句
-                AddNum.Connection = Connect;//指定连接
-                AddNum.ExecuteNonQuery();//执行更新
-                return true;//更新成功
+
+                OracleParameter[] Parm = new OracleParameter[2];//实例化参数列表
+                Parm[0] = new OracleParameter("v_Goodsid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：商品号
+                Parm[0].Value = _GoodsNo;
+                Parm[1] = new OracleParameter("v_Num", OracleType.VarChar);
+                Parm[1].Direction = ParameterDirection.Input;//输入参数：新增货架数量
+                Parm[1].Value = Num;
+
+                OracleCommand UP = new OracleCommand("UpGoodsNowNum", Connect);//指定存储过程
+                UP.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                UP.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    UP.Parameters.Add(tP);
+                }
+                if (UP.ExecuteNonQuery() == 0)//调用存储过程
+                    return false;//更新失败
+                else
+                    return true;//更新成功
             }
             catch (Exception)
             {
@@ -897,13 +1372,44 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand AddStaff = new OracleCommand(@"insert into MarketTerminal_Goods
-                                                             values ('" + _GoodsInfo[0] + "','" + _GoodsInfo[1] + "','" + _GoodsInfo[2] + "','" +
-                                                            _GoodsInfo[3] + "','" + _GoodsInfo[4] + "','" + _GoodsInfo[5] + "','" +
-                                                            _GoodsInfo[6] + "','" + _GoodsInfo[7] + @"')");//用于存放新增商品语句
-                AddStaff.Connection = Connect;//指定连接
-                AddStaff.ExecuteNonQuery();//执行添加
-                return true;//添加成功
+
+                OracleParameter[] Parm = new OracleParameter[8];//实例化参数列表
+                Parm[0] = new OracleParameter("v_Goodsid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：商品号
+                Parm[0].Value = _GoodsInfo[0];
+                Parm[1] = new OracleParameter("v_GOODSNAME", OracleType.VarChar);
+                Parm[1].Direction = ParameterDirection.Input;//输入参数：商品名
+                Parm[1].Value = _GoodsInfo[1];
+                Parm[2] = new OracleParameter("v_IN_PRICE", OracleType.Number);
+                Parm[2].Direction = ParameterDirection.Input;//输入参数：进价
+                Parm[2].Value = _GoodsInfo[2];
+                Parm[3] = new OracleParameter("v_OUT_PRICE", OracleType.Number);
+                Parm[3].Direction = ParameterDirection.Input;//输入参数：售价
+                Parm[3].Value = _GoodsInfo[3];
+                Parm[4] = new OracleParameter("v_MARKETLEFT", OracleType.Int16);
+                Parm[4].Direction = ParameterDirection.Input;//输入参数：超市余量
+                Parm[4].Value = _GoodsInfo[4];
+                Parm[5] = new OracleParameter("v_TRUNKLEFT", OracleType.Int16);
+                Parm[5].Direction = ParameterDirection.Input;//输入参数：仓库余量
+                Parm[5].Value = _GoodsInfo[5];
+                Parm[6] = new OracleParameter("v_BRAND", OracleType.VarChar);
+                Parm[6].Direction = ParameterDirection.Input;//输入参数：品牌
+                Parm[6].Value = _GoodsInfo[6];
+                Parm[7] = new OracleParameter("v_UNIT", OracleType.VarChar);
+                Parm[7].Direction = ParameterDirection.Input;//输入参数：单位
+                Parm[7].Value = _GoodsInfo[7];
+
+                OracleCommand UP = new OracleCommand("NewGoods", Connect);//指定存储过程
+                UP.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                UP.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    UP.Parameters.Add(tP);
+                }
+                if (UP.ExecuteNonQuery() == 0)//调用存储过程
+                    return false;//删除失败
+                else
+                    return true;//删除成功
             }
             catch (Exception)
             {
@@ -925,13 +1431,26 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand GetGoods = new OracleCommand(@"select * from MarketTerminal_Goods
-                                                              where GoodsNo='" + _GoodsNo + @"'");//查询语句
-                GetGoods.Connection = Connect;//指定连接
-                OracleDataReader Reader = GetGoods.ExecuteReader();//执行查询
-                if (Reader.Read())
-                    return new String[] { Reader[0].ToString(), Reader[1].ToString(), Reader[2].ToString(), Reader[3].ToString(), Reader[4].ToString(),
-                                            Reader[5].ToString(), Reader[6].ToString(), Reader[7].ToString()};//返回信息集
+
+                OracleParameter[] Parm = new OracleParameter[2];//实例化参数列表
+                Parm[0] = new OracleParameter("v_Goodsid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;
+                Parm[0].Value = _GoodsNo;//输入商品号
+                Parm[1] = new OracleParameter("p_cur", OracleType.Cursor);
+                Parm[1].Direction = ParameterDirection.Output;//定义引用游标输出参数
+
+                OracleCommand QueryGoods = new OracleCommand("GetGoods", Connect);//指定存储过程
+                QueryGoods.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                QueryGoods.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    QueryGoods.Parameters.Add(tP);
+                }
+                OracleDataAdapter OA = new OracleDataAdapter(QueryGoods);
+                DataTable datatable = new DataTable();
+                OA.Fill(datatable);//调用存储过程并拉取数据
+                if (datatable.Rows.Count != 0)
+                    return new String[] { datatable.Rows[0][0].ToString(), datatable.Rows[0][1].ToString(), datatable.Rows[0][2].ToString(), datatable.Rows[0][3].ToString(), datatable.Rows[0][4].ToString(), datatable.Rows[0][5].ToString(), datatable.Rows[0][6].ToString(), datatable.Rows[0][7].ToString() };//查询成功
                 else
                     return null;//无此商品返回null
             }
@@ -955,18 +1474,44 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand UpGoods = new OracleCommand(@"update MarketTerminal_Goods
-                                                             set GOODSNAME='" + _GoodsInfo[1] + "'," +
-                                                                 "IN_PRICE='" + _GoodsInfo[2] + "'," +
-                                                                 "OUT_PRICE='" + _GoodsInfo[3] + "'," +
-                                                                 "MARKETLEFT='" + _GoodsInfo[4] + "'," +
-                                                                 "TRUNKLEFT='" + _GoodsInfo[5] + "'," +
-                                                                 "BRAND='" + _GoodsInfo[6] + "'," +
-                                                                 "UNIT='" + _GoodsInfo[7] + "' " +
-                                                                 "where GOODSNO='" + _GoodsInfo[0] + "'");//用于存放更新商品语句
-                UpGoods.Connection = Connect;//指定连接
-                UpGoods.ExecuteNonQuery();//执行修改
-                return true;//修改成功
+
+                OracleParameter[] Parm = new OracleParameter[8];//实例化参数列表
+                Parm[0] = new OracleParameter("v_Goodsid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：商品号
+                Parm[0].Value = _GoodsInfo[0];
+                Parm[1] = new OracleParameter("v_GOODSNAME", OracleType.VarChar);
+                Parm[1].Direction = ParameterDirection.Input;//输入参数：商品名
+                Parm[1].Value = _GoodsInfo[1];
+                Parm[2] = new OracleParameter("v_IN_PRICE", OracleType.Number);
+                Parm[2].Direction = ParameterDirection.Input;//输入参数：进价
+                Parm[2].Value = _GoodsInfo[2];
+                Parm[3] = new OracleParameter("v_OUT_PRICE", OracleType.Number);
+                Parm[3].Direction = ParameterDirection.Input;//输入参数：售价
+                Parm[3].Value = _GoodsInfo[3];
+                Parm[4] = new OracleParameter("v_MARKETLEFT", OracleType.Int16);
+                Parm[4].Direction = ParameterDirection.Input;//输入参数：超市余量
+                Parm[4].Value = _GoodsInfo[4];
+                Parm[5] = new OracleParameter("v_TRUNKLEFT", OracleType.Int16);
+                Parm[5].Direction = ParameterDirection.Input;//输入参数：仓库余量
+                Parm[5].Value = _GoodsInfo[5];
+                Parm[6] = new OracleParameter("v_BRAND", OracleType.VarChar);
+                Parm[6].Direction = ParameterDirection.Input;//输入参数：品牌
+                Parm[6].Value = _GoodsInfo[6];
+                Parm[7] = new OracleParameter("v_UNIT", OracleType.VarChar);
+                Parm[7].Direction = ParameterDirection.Input;//输入参数：单位
+                Parm[7].Value = _GoodsInfo[7];
+
+                OracleCommand UP = new OracleCommand("UPGoods", Connect);//指定存储过程
+                UP.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                UP.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    UP.Parameters.Add(tP);
+                }
+                if (UP.ExecuteNonQuery() == 0)//调用存储过程
+                    return false;//删除失败
+                else
+                    return true;//删除成功
             }
             catch (Exception)
             {
@@ -988,19 +1533,32 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand QueryAccountList = new OracleCommand(@"select * from MarketTerminal_Account");//查询语句
-                QueryAccountList.Connection = Connect;//指定连接
-                OracleDataReader AccountListReader = QueryAccountList.ExecuteReader();//执行查询
-                while (AccountListReader.Read())//按行读取，直到结尾
+
+                OracleParameter[] Parm = new OracleParameter[1];//实例化参数列表
+                Parm[0] = new OracleParameter("p_cur", OracleType.Cursor);
+                Parm[0].Direction = ParameterDirection.Output;//定义引用游标输出参数
+
+                OracleCommand QueryAccountList = new OracleCommand("proc_GetAccountList", Connect);//指定存储过程
+                QueryAccountList.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                QueryAccountList.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    QueryAccountList.Parameters.Add(tP);
+                }
+                OracleDataAdapter OA = new OracleDataAdapter(QueryAccountList);
+                DataTable datatable = new DataTable();
+                OA.Fill(datatable);//调用存储过程并拉取数据
+                int i = datatable.Rows.Count;//循环行数次
+                while ((i--) != 0)//按行读取，直到结尾
                 {
-                    AccountList.Add(new String[] {AccountListReader[0].ToString(),//账目流水号
-                                                    AccountListReader[1].ToString(),//商品编号
-                                                    AccountListReader[2].ToString(),//商品名
-                                                    AccountListReader[3].ToString(),//进价
-                                                    AccountListReader[4].ToString(),//售价
-                                                    AccountListReader[5].ToString(),//出售量
-                                                    AccountListReader[6].ToString(),//单位
-                                                    AccountListReader[7].ToString()});//利润
+                    AccountList.Add(new String[] {datatable.Rows[i][0].ToString(),//账目流水号
+                                                datatable.Rows[i][1].ToString(),//商品号
+                                                datatable.Rows[i][2].ToString(),//商品名
+                                                datatable.Rows[i][3].ToString(),//进价
+                                                datatable.Rows[i][4].ToString(),//售价
+                                                datatable.Rows[i][5].ToString(),//售出量
+                                                datatable.Rows[i][6].ToString(),//单位
+                                                datatable.Rows[i][7].ToString()});//利润
                 }
                 return AccountList;//查询成功
             }
@@ -1024,18 +1582,44 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand UpAccount = new OracleCommand(@"update MarketTerminal_Account
-                                                             set GOODSNO='" + _AccountInfo[1] + "'," +
-                                                                 "GOODSNAME='" + _AccountInfo[2] + "'," +
-                                                                 "IN_PRICE='" + _AccountInfo[3] + "'," +
-                                                                 "OUT_PRICE='" + _AccountInfo[4] + "'," +
-                                                                 "OUTNUM='" + _AccountInfo[5] + "'," +
-                                                                 "UNIT='" + _AccountInfo[6] + "'," +
-                                                                 "PRICE='" + _AccountInfo[7] + "' " +
-                                                                 "where ACCOUNTNO='" + _AccountInfo[0] + "'");//用于存放更新商品语句
-                UpAccount.Connection = Connect;//指定连接
-                UpAccount.ExecuteNonQuery();//执行修改
-                return true;//修改成功
+
+                OracleParameter[] Parm = new OracleParameter[8];//实例化参数列表
+                Parm[0] = new OracleParameter("v_AccId", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：账目号
+                Parm[0].Value = _AccountInfo[0];
+                Parm[1] = new OracleParameter("v_Goodsid", OracleType.VarChar);
+                Parm[1].Direction = ParameterDirection.Input;//输入参数：商品号
+                Parm[1].Value = _AccountInfo[1];
+                Parm[2] = new OracleParameter("v_GOODSNAME", OracleType.VarChar);
+                Parm[2].Direction = ParameterDirection.Input;//输入参数：商品名
+                Parm[2].Value = _AccountInfo[2];
+                Parm[3] = new OracleParameter("v_IN_PRICE", OracleType.Number);
+                Parm[3].Direction = ParameterDirection.Input;//输入参数：进价
+                Parm[3].Value = _AccountInfo[3];
+                Parm[4] = new OracleParameter("v_OUT_PRICE", OracleType.Number);
+                Parm[4].Direction = ParameterDirection.Input;//输入参数：售价
+                Parm[4].Value = _AccountInfo[4];
+                Parm[5] = new OracleParameter("v_OUTNUM", OracleType.Int16);
+                Parm[5].Direction = ParameterDirection.Input;//输入参数：售出量
+                Parm[5].Value = _AccountInfo[5];
+                Parm[6] = new OracleParameter("v_UNIT", OracleType.VarChar);
+                Parm[6].Direction = ParameterDirection.Input;//输入参数：单位
+                Parm[6].Value = _AccountInfo[6];
+                Parm[7] = new OracleParameter("v_Price", OracleType.Number);
+                Parm[7].Direction = ParameterDirection.Input;//输入参数：利润
+                Parm[7].Value = _AccountInfo[7];
+
+                OracleCommand UP = new OracleCommand("UpAccount", Connect);//指定存储过程
+                UP.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                UP.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    UP.Parameters.Add(tP);
+                }
+                if (UP.ExecuteNonQuery() == 0)//调用存储过程
+                    return false;//删除失败
+                else
+                    return true;//删除成功
             }
             catch (Exception)
             {
@@ -1057,12 +1641,23 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand DeleteAcount = new OracleCommand(@"delete 
-                                                                    from MARKETTERMINAL_Account
-                                                                    where ACCOUNTNO='" + _AccountNo + @"'");//账目行删除语句
-                DeleteAcount.Connection = Connect;//指定连接
-                DeleteAcount.ExecuteNonQuery();//执行删除
-                return true;//删除成功
+
+                OracleParameter[] Parm = new OracleParameter[1];//实例化参数列表
+                Parm[0] = new OracleParameter("v_Acc", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//输入参数：账目号
+                Parm[0].Value = _AccountNo;
+
+                OracleCommand UP = new OracleCommand("DeleteAccount", Connect);//指定存储过程
+                UP.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                UP.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    UP.Parameters.Add(tP);
+                }
+                if (UP.ExecuteNonQuery() == 0)//调用存储过程
+                    return false;//删除失败
+                else
+                    return true;//删除成功
             }
             catch (Exception)
             {
@@ -1085,14 +1680,35 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand GetGoods = new OracleCommand(@"select * from MarketTerminal_Goods
-                                                              where GoodsNo like '%" + _GoodsNo + @"%'");//查询语句
-                GetGoods.Connection = Connect;//指定连接
-                OracleDataReader Reader = GetGoods.ExecuteReader();//执行查询
-                while (Reader.Read())
+
+                OracleParameter[] Parm = new OracleParameter[2];//实例化参数列表
+                Parm[0] = new OracleParameter("v_Goodsid", OracleType.VarChar);
+                Parm[0].Direction = ParameterDirection.Input;//定义引用游标输出参数
+                Parm[0].Value = _GoodsNo;
+                Parm[1] = new OracleParameter("p_cur", OracleType.Cursor);
+                Parm[1].Direction = ParameterDirection.Output;//定义引用游标输出参数
+
+                OracleCommand QueryAccountList = new OracleCommand("proc_GetGoodsList_P", Connect);//指定存储过程
+                QueryAccountList.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                QueryAccountList.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    QueryAccountList.Parameters.Add(tP);
+                }
+                OracleDataAdapter OA = new OracleDataAdapter(QueryAccountList);
+                DataTable datatable = new DataTable();
+                OA.Fill(datatable);//调用存储过程并拉取数据
+                int i = datatable.Rows.Count;//循环行数次
+                while ((i--) != 0)//按行读取，直到结尾
                 {
-                    InfoList.Add(new String[] { Reader[0].ToString(), Reader[1].ToString(), Reader[2].ToString(), Reader[3].ToString(), Reader[4].ToString(),
-                                            Reader[5].ToString(), Reader[6].ToString(), Reader[7].ToString()});
+                    InfoList.Add(new String[] {datatable.Rows[i][0].ToString(),//商品编号
+                                                datatable.Rows[i][1].ToString(),//商品名
+                                                datatable.Rows[i][2].ToString(),//进价
+                                                datatable.Rows[i][3].ToString(),//售价
+                                                datatable.Rows[i][4].ToString(),//货架剩余
+                                                datatable.Rows[i][5].ToString(),//仓库剩余
+                                                datatable.Rows[i][6].ToString(),//品牌
+                                                datatable.Rows[i][7].ToString()});//单位
                 }
                 return InfoList;//查询成功
             }
@@ -1117,14 +1733,35 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand GetGoods = new OracleCommand(@"select * from MarketTerminal_Goods
-                                                              where Marketleft < '" + Threshold + @"'");//查询语句
-                GetGoods.Connection = Connect;//指定连接
-                OracleDataReader Reader = GetGoods.ExecuteReader();//执行查询
-                while (Reader.Read())
+
+                OracleParameter[] Parm = new OracleParameter[2];//实例化参数列表
+                Parm[0] = new OracleParameter("v_Thresh", OracleType.Int16);
+                Parm[0].Direction = ParameterDirection.Input;//阈值
+                Parm[0].Value = Threshold;
+                Parm[1] = new OracleParameter("p_cur", OracleType.Cursor);
+                Parm[1].Direction = ParameterDirection.Output;//定义引用游标输出参数
+
+                OracleCommand QueryAccountList = new OracleCommand("proc_GetGoodsList_NF", Connect);//指定存储过程
+                QueryAccountList.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                QueryAccountList.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    QueryAccountList.Parameters.Add(tP);
+                }
+                OracleDataAdapter OA = new OracleDataAdapter(QueryAccountList);
+                DataTable datatable = new DataTable();
+                OA.Fill(datatable);//调用存储过程并拉取数据
+                int i = datatable.Rows.Count;//循环行数次
+                while ((i--) != 0)//按行读取，直到结尾
                 {
-                    InfoList.Add(new String[] { Reader[0].ToString(), Reader[1].ToString(), Reader[2].ToString(), Reader[3].ToString(), Reader[4].ToString(),
-                                            Reader[5].ToString(), Reader[6].ToString(), Reader[7].ToString()});
+                    InfoList.Add(new String[] {datatable.Rows[i][0].ToString(),//商品编号
+                                                datatable.Rows[i][1].ToString(),//商品名
+                                                datatable.Rows[i][2].ToString(),//进价
+                                                datatable.Rows[i][3].ToString(),//售价
+                                                datatable.Rows[i][4].ToString(),//货架剩余
+                                                datatable.Rows[i][5].ToString(),//仓库剩余
+                                                datatable.Rows[i][6].ToString(),//品牌
+                                                datatable.Rows[i][7].ToString()});//单位
                 }
                 return InfoList;//查询成功
             }
@@ -1149,14 +1786,35 @@ namespace Market
             try
             {
                 Connect.Open();//尝试连接数据库
-                OracleCommand GetGoods = new OracleCommand(@"select * from MarketTerminal_Goods
-                                                              where TrunkLeft < '" + Threshold + @"'");//查询语句
-                GetGoods.Connection = Connect;//指定连接
-                OracleDataReader Reader = GetGoods.ExecuteReader();//执行查询
-                while (Reader.Read())
+
+                OracleParameter[] Parm = new OracleParameter[2];//实例化参数列表
+                Parm[0] = new OracleParameter("v_Thresh", OracleType.Int16);
+                Parm[0].Direction = ParameterDirection.Input;//阈值
+                Parm[0].Value = Threshold;
+                Parm[1] = new OracleParameter("p_cur", OracleType.Cursor);
+                Parm[1].Direction = ParameterDirection.Output;//定义引用游标输出参数
+
+                OracleCommand QueryAccountList = new OracleCommand("proc_GetGoodsList_TF", Connect);//指定存储过程
+                QueryAccountList.CommandType = CommandType.StoredProcedure;//本次查询为存储过程
+                QueryAccountList.Parameters.Clear();//清空参数列表
+                foreach (OracleParameter tP in Parm)
+                {//填充参数列表
+                    QueryAccountList.Parameters.Add(tP);
+                }
+                OracleDataAdapter OA = new OracleDataAdapter(QueryAccountList);
+                DataTable datatable = new DataTable();
+                OA.Fill(datatable);//调用存储过程并拉取数据
+                int i = datatable.Rows.Count;//循环行数次
+                while ((i--) != 0)//按行读取，直到结尾
                 {
-                    InfoList.Add(new String[] { Reader[0].ToString(), Reader[1].ToString(), Reader[2].ToString(), Reader[3].ToString(), Reader[4].ToString(),
-                                            Reader[5].ToString(), Reader[6].ToString(), Reader[7].ToString()});
+                    InfoList.Add(new String[] {datatable.Rows[i][0].ToString(),//商品编号
+                                                datatable.Rows[i][1].ToString(),//商品名
+                                                datatable.Rows[i][2].ToString(),//进价
+                                                datatable.Rows[i][3].ToString(),//售价
+                                                datatable.Rows[i][4].ToString(),//货架剩余
+                                                datatable.Rows[i][5].ToString(),//仓库剩余
+                                                datatable.Rows[i][6].ToString(),//品牌
+                                                datatable.Rows[i][7].ToString()});//单位
                 }
                 return InfoList;//查询成功
             }
